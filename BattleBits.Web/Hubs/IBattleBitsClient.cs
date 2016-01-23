@@ -1,6 +1,6 @@
 namespace BattleBits.Web.Hubs
 {
-    public interface ICompetitionClient
+    public interface IBattleBitsClient
     {
         void Guess();
     }

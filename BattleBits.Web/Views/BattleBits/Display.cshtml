@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "~/Views/Shared/_BareLayout.cshtml";
+}
+
+<div ng-app="BattleBits">
+    <ng-view />
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/battle-bits")
+    <script>
+        var hub = $.connection.BattleBitsHub;
+        angular
+            .module('BattleBits')
+            .config(function ($routeProvider) {
+                $routeProvider
+                    .when('/', {
+                        controller: 'LeaderboardController',
+                        templateUrl: '@Url.Action("LeaderboardTemplate", "BattleBits")'
+                    })
+                    .when('/game', {
+                        controller: 'GameDisplayController',
+                        templateUrl: '@Url.Action("GameDisplayTemplate", "BattleBits")'
+                    })
+                    .when('/play', {
+                        controller: 'GamePlayController',
+                        templateUrl: '@Url.Action("GamePlayTemplate", "BattleBits")'
+                    })
+                    .otherwise({
+                        redirectTo: '/'
+                    });
+            })
+            .value('CompetitionHub', function () {
+
+            });
+    </script>
+}

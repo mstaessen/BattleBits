@@ -214,19 +214,19 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BattleBitsController.cs" />
     <Compile Include="Controllers\CompetitionController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\BattleBitsHub.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="ViewModels\ChangePasswordBindingModel.cs" />
     <Compile Include="Models\Competition.cs" />
-    <Compile Include="Hubs\CompetitionHub.cs" />
     <Compile Include="Models\CompetitionContext.cs" />
     <Compile Include="Models\Game.cs" />
-    <Compile Include="Hubs\ICompetitionClient.cs" />
+    <Compile Include="Hubs\IBattleBitsClient.cs" />
     <Compile Include="ViewModels\AddExternalLoginBindingModel.cs" />
     <Compile Include="ViewModels\ExternalLoginViewModel.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -250,6 +250,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\angular-route.min.js" />
+    <Content Include="Scripts\battle-bits.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -331,12 +333,11 @@
     <Content Include="Content\site.css" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Competition\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_BareLayout.cshtml" />
     <Content Include="Views\Competition\Create.cshtml" />
-    <Content Include="Views\Competition\Display.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -347,6 +348,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+    <Content Include="Views\BattleBits\Display.cshtml" />
+    <Content Include="Views\BattleBits\LeaderboardTemplate.cshtml" />
+    <Content Include="Views\BattleBits\GamePlayTemplate.cshtml" />
+    <Content Include="Views\BattleBits\GameDisplayTemplate.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

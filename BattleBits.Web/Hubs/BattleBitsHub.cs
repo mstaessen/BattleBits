@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 
 namespace BattleBits.Web.Hubs
 {
-    public class CompetitionHub : Hub<ICompetitionClient>
+    public class BattleBitsHub : Hub<IBattleBitsClient>
     {
-        private IDictionary<string, CompetitionSession> competitionSessions = new Dictionary<string, CompetitionSession>(); 
-
         public Task JoinCompetition(string competitionId)
         {
             return Groups.Add(Context.ConnectionId, competitionId);
@@ -24,6 +21,4 @@ namespace BattleBits.Web.Hubs
 
         }
     }
-
-    internal class CompetitionSession {}
 }

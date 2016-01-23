@@ -1,0 +1,27 @@
+﻿@model BattleBits.Web.ViewModels.HomeViewModel
+
+@{
+    var competitionGroups = @Model.Competitions.GroupBy(x => x.GameType).ToList();
+}
+
+@foreach (var group in competitionGroups) {
+    <div class="row">
+        <div class="col-sm-12 col-md-4 col-md-push-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@group.Key</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        @foreach (var competition in group) {
+                            <a class="list-group-item" href="@Url.Action("Display", "Competition", new {id = competition.Id})">
+                                <span class="badge">#Players or HighScore</span>
+                                @competition.Name
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
