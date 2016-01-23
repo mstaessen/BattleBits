@@ -15,6 +15,7 @@ using Microsoft.Owin.Security.OAuth;
 using BattleBits.Web.Models;
 using BattleBits.Web.Providers;
 using BattleBits.Web.Results;
+using BattleBits.Web.ViewModels;
 
 namespace BattleBits.Web.Controllers
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BattleBits.Web.Models
+﻿namespace BattleBits.Web.ViewModels
 {
     // Models returned by AccountController actions.
 

@@ -221,20 +221,20 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ApplicationDbContext.cs" />
-    <Compile Include="Models\ChangePasswordBindingModel.cs" />
+    <Compile Include="ViewModels\ChangePasswordBindingModel.cs" />
     <Compile Include="Models\Competition.cs" />
     <Compile Include="Hubs\CompetitionHub.cs" />
     <Compile Include="Models\CompetitionContext.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Hubs\ICompetitionClient.cs" />
-    <Compile Include="Models\AddExternalLoginBindingModel.cs" />
+    <Compile Include="ViewModels\AddExternalLoginBindingModel.cs" />
     <Compile Include="ViewModels\ExternalLoginViewModel.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="ViewModels\ManageInfoViewModel.cs" />
-    <Compile Include="Models\RegisterBindingModel.cs" />
-    <Compile Include="Models\RegisterExternalBindingModel.cs" />
-    <Compile Include="Models\RemoveLoginBindingModel.cs" />
-    <Compile Include="Models\SetPasswordBindingModel.cs" />
+    <Compile Include="ViewModels\RegisterBindingModel.cs" />
+    <Compile Include="ViewModels\RegisterExternalBindingModel.cs" />
+    <Compile Include="ViewModels\RemoveLoginBindingModel.cs" />
+    <Compile Include="ViewModels\SetPasswordBindingModel.cs" />
     <Compile Include="Models\UserInfoViewModel.cs" />
     <Compile Include="ViewModels\UserLoginInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

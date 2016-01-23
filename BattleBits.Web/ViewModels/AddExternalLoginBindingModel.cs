@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BattleBits.Web.Models
+namespace BattleBits.Web.ViewModels
 {
     // Models used as parameters to AccountController actions.
 

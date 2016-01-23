@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BattleBits.Web.Models
+namespace BattleBits.Web.ViewModels
 {
     public class RegisterExternalBindingModel
     {

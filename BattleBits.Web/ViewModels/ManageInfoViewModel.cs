@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BattleBits.Web.Models
+namespace BattleBits.Web.ViewModels
 {
     public class ManageInfoViewModel
     {
