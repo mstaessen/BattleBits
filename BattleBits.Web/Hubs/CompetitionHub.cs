@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 
@@ -8,11 +6,11 @@ namespace BattleBits.Web.Hubs
 {
     public class CompetitionHub : Hub<ICompetitionClient>
     {
-        private ISet<Competition> activeCompetitions = new HashSet<Competition>();
+        private IDictionary<string, CompetitionSession> competitionSessions = new Dictionary<string, CompetitionSession>(); 
 
-        public Task JoinCompetition(string roomName, string userId)
+        public Task JoinCompetition(string competitionId)
         {
-            return Groups.Add(Context.ConnectionId, roomName);
+            return Groups.Add(Context.ConnectionId, competitionId);
         }
 
         public Task LeaveRoom(string roomName)
@@ -23,6 +21,9 @@ namespace BattleBits.Web.Hubs
         public override Task OnDisconnected(bool stopCalled)
         {
             return base.OnDisconnected(stopCalled);
+
         }
     }
+
+    internal class CompetitionSession {}
 }
