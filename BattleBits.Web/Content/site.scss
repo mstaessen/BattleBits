@@ -1,0 +1,28 @@
+﻿@import 'bootstrap'; 
+
+ul.bits {
+    text-align: justify;
+    width: 80%;
+    margin: 0 auto;
+
+    &:after {
+        content: '';
+        display: inline-block;
+        width: 100%;
+    }
+
+    li {
+        display: inline-block;
+        text-align: center;
+        border-radius: 50%;
+        min-width: 64px;
+        min-height: 64px;
+        line-height: 64px;
+        font-size: 2em;
+        background-color: yellow;
+
+        &:active {
+            background-color: green;
+        }
+    }
+}

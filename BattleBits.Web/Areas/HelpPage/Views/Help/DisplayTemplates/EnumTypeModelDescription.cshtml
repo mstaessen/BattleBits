@@ -8,7 +8,7 @@
         <tr><th>Name</th><th>Value</th><th>Description</th></tr>
     </thead>
     <tbody>
-        @foreach (EnumValueDescription value in Model.Values)
+        @foreach (var value in Model.Values)
         {
             <tr>
                 <td class="enum-name"><b>@value.Name</b></td>

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using BattleBits.Web.ViewModels;
 
 namespace BattleBits.Web.Controllers
 {
@@ -10,9 +8,14 @@ namespace BattleBits.Web.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
-
-            return View();
+            var model = new HomeViewModel {
+                Competitions = new List<CompetitionViewModel> {
+                    new CompetitionViewModel {
+                        Name = "Test"
+                    }
+                }
+            };
+            return View(model);
         }
     }
 }
