@@ -14,8 +14,8 @@
                 <div class="panel-body">
                     <div class="list-group">
                         @foreach (var competition in group) {
-                            <a class="list-group-item" href="@Url.Action("Display", "Competition", new {id = competition.Id})">
-                                <span class="badge">#Players or HighScore</span>
+                            <a class="list-group-item" href="@Url.Action("Display", competition.GameType.ToString(), new { id = competition.Id })">
+                                <span class="badge">@competition.NumberOfGames games played</span>
                                 @competition.Name
                             </a>
                         }

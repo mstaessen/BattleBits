@@ -222,12 +222,16 @@
     </Compile>
     <Compile Include="Hubs\BattleBitsHub.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\GameEntry.cs" />
+    <Compile Include="Models\GameType.cs" />
     <Compile Include="ViewModels\ChangePasswordBindingModel.cs" />
     <Compile Include="Models\Competition.cs" />
     <Compile Include="Models\CompetitionContext.cs" />
-    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\BattleBitsGame.cs" />
     <Compile Include="Hubs\IBattleBitsClient.cs" />
     <Compile Include="ViewModels\AddExternalLoginBindingModel.cs" />
+    <Compile Include="ViewModels\CompetitionRankingViewModel.cs" />
     <Compile Include="ViewModels\ExternalLoginViewModel.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="ViewModels\ManageInfoViewModel.cs" />
@@ -337,7 +341,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_BareLayout.cshtml" />
-    <Content Include="Views\Competition\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -352,6 +355,7 @@
     <Content Include="Views\BattleBits\LeaderboardTemplate.cshtml" />
     <Content Include="Views\BattleBits\GamePlayTemplate.cshtml" />
     <Content Include="Views\BattleBits\GameDisplayTemplate.cshtml" />
+    <Content Include="Views\Competition\Display.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

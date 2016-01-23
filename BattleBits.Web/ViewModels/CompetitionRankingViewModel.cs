@@ -1,16 +1,15 @@
 
 using BattleBits.Web.Models;
+using System.Collections.Generic;
 
 namespace BattleBits.Web.ViewModels
 {
-    public class CompetitionViewModel
+    public class CompetitionRankingViewModel
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public GameType GameType { get; set; }
-
-        public int NumberOfGames { get; set; }
+        public IList<GameEntry> GameEntries { get; set; }
     }
 }

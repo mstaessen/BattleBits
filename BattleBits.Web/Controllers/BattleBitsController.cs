@@ -1,11 +1,10 @@
-using System;
 using System.Web.Mvc;
 
 namespace BattleBits.Web.Controllers
 {
     public class BattleBitsController : Controller
     {
-        public ActionResult Display(Guid id)
+        public ActionResult Display(int id)
         {
             return View();
         }

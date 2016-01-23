@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BattleBits.Web.Models
 {
     public class Competition
     {
-        public Guid Id { get; protected set; } = Guid.NewGuid();
+        [Key]
+        public int Id { get; set; }
 
-        public virtual ISet<Game> Games { get; protected set; } = new HashSet<Game>();
+        public GameType GameType { get; set; }
 
         public string Name { get; set; }
 
-        public int NumberCount { get; set; } = 24;
-
-        public Game CreateGame()
-        {
-            var game = new Game(NumberCount);
-            Games.Add(game);
-            return game;
-        }
     }
 }

@@ -1,0 +1,63 @@
+﻿@model BattleBits.Web.ViewModels.CompetitionRankingViewModel
+@using BattleBits.Web.Models;
+
+@{
+    Layout = "~/Views/Shared/_BareLayout.cshtml";
+}
+
+<div class="col-md-5">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Ranking @Model.Name</h3>
+        </div>
+        <div class="panel-body">
+            @if(Model.GameEntries.Any())
+            {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Time</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        GameEntry lastEntry = null;
+                        var currentPlace = 0;
+                    }
+                    @foreach(var gameEntry in Model.GameEntries)
+                    {
+                        <tr>
+                            <td>
+                                @{
+                                    currentPlace++;
+                                    if (lastEntry == null
+                                        || lastEntry.Score != gameEntry.Score
+                                        || lastEntry.Duration != gameEntry.Duration)
+                                    {
+                                        lastEntry = gameEntry;
+                                        @currentPlace // only show when different score than previous player in ranking
+                                    }
+                                                        
+                                }
+                                &nbsp;
+                            </td>
+                            <td>@gameEntry.User.Name</td>
+                            <td>@gameEntry.Duration</td>
+                            <td>@gameEntry.Score</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <p>No scores recorded so far</p>@*TODO*@
+            }
+
+        </div>
+    </div>
+</div>
+
