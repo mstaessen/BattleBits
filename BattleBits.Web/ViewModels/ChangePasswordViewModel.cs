@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BattleBits.Web.ViewModels
 {
-    public class ChangePasswordBindingModel
+    public class ChangePasswordViewModel
     {
         [Required]
         [DataType(DataType.Password)]

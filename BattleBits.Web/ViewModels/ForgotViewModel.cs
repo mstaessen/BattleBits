@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BattleBits.Web.ViewModels
 {
-    public class RegisterExternalBindingModel
+    public class ForgotViewModel
     {
         [Required]
         [Display(Name = "Email")]

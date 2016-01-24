@@ -1,13 +1,10 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace BattleBits.Web.DTO
+namespace BattleBits.Web.Events
 {
-    public class BattleBitsGameDTO
+    public class BattleBitsGameScheduledEvent
     {
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
         [JsonProperty("start")]
         public DateTime StartTime { get; set; }
 

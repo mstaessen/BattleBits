@@ -1,7 +1,13 @@
-﻿@{
-    Layout = "~/Views/Shared/_BareLayout.cshtml";
-}
-
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Capgemini Competition Platform</title>
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    @Styles.Render("~/Content/bootstrap")
+</head>
+<body>
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
@@ -10,3 +16,8 @@
     </div>
     @RenderBody()
 </div>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
+</body>
+</html>

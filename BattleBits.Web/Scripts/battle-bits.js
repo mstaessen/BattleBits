@@ -7,12 +7,12 @@
         $scope.guess = 0;
         // TODO load from server
         // NOTE: can one of the HEXs be zero? in that case the printing is sometimes wrong
-        $scope.numbers = [21, 59, 192, 204, 153, 99, 66, 12, 199, 200, 222, 250, 13];
+        $scope.numbers = [21, 59, 192, 204, 153, 99, 66, 12, 199, 200, 222, 250, 21, 59, 192, 204, 153, 99, 66, 12, 199, 200, 222, 250];
         $scope.numbersGuessed = 0;
-        $scope.numbersToGuess = 24;
+        $scope.numbersToGuess = $scope.numbers.length;
         $scope.timeLeft = 45;
         $scope.number = $scope.numbers[$scope.numbersGuessed];
-​
+
         $scope.isBitActive = function (bitPosition) {
             return ($scope.guess & (1 << bitPosition)) !== 0;
         };
@@ -40,7 +40,7 @@
                         }
                     }, function() {
                         
-                    });
+        });
             }
         });
 ​
@@ -69,7 +69,7 @@
                 
             },
             guess: function(number, guess) {
-                
+
             }
         };
     })

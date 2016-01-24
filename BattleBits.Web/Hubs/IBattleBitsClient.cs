@@ -1,7 +1,19 @@
+using BattleBits.Web.Events;
+
 namespace BattleBits.Web.Hubs
 {
     public interface IBattleBitsClient
     {
-        void Guess();
+        void GameScheduled(BattleBitsGameScheduledEvent evt);
+
+        void GameCancelled();
+
+        void PlayerJoined(BattleBitsPlayerJoinedEvent evt);
+
+        void PlayerLeft(BattleBitsPlayerLeftEvent evt);
+
+        void GameStarted();
+
+        void GameEnded();
     }
 }

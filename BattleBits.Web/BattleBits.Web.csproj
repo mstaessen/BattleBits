@@ -57,6 +57,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Owin.Security.Providers, Version=1.25.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Security.Providers.1.26\lib\net45\Owin.Security.Providers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -216,40 +220,51 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BattleBitsController.cs" />
     <Compile Include="Controllers\CompetitionController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="DTO\BattleBitsGameDTO.cs" />
+    <Compile Include="Events\BattleBitsGameScheduledEvent.cs" />
+    <Compile Include="Events\BattleBitsPlayerJoinedEvent.cs" />
+    <Compile Include="Events\BattleBitsPlayerLeftEvent.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\BattleBitsHub.cs" />
-    <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\BattleBitsCompetition.cs" />
+    <Compile Include="Models\CompetitionContextInitializer.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\GameEntry.cs" />
     <Compile Include="Models\GameType.cs" />
+    <Compile Include="ViewModels\AddPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\ChangePasswordViewModel.cs" />
+    <Compile Include="ViewModels\ConfigureTwoFactorViewModel.cs" />
+    <Compile Include="ViewModels\ExternalLoginConfirmationViewModel.cs" />
     <Compile Include="ViewModels\BattleBitsViewModel.cs" />
-    <Compile Include="ViewModels\ChangePasswordBindingModel.cs" />
     <Compile Include="Models\Competition.cs" />
     <Compile Include="Models\CompetitionContext.cs" />
     <Compile Include="Models\BattleBitsGame.cs" />
     <Compile Include="Hubs\IBattleBitsClient.cs" />
-    <Compile Include="ViewModels\AddExternalLoginBindingModel.cs" />
     <Compile Include="ViewModels\CompetitionRankingViewModel.cs" />
-    <Compile Include="ViewModels\ExternalLoginViewModel.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
-    <Compile Include="ViewModels\ManageInfoViewModel.cs" />
-    <Compile Include="ViewModels\RegisterBindingModel.cs" />
-    <Compile Include="ViewModels\RegisterExternalBindingModel.cs" />
-    <Compile Include="ViewModels\RemoveLoginBindingModel.cs" />
-    <Compile Include="ViewModels\SetPasswordBindingModel.cs" />
     <Compile Include="Models\UserInfoViewModel.cs" />
-    <Compile Include="ViewModels\UserLoginInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\CompetitionViewModel.cs" />
     <Compile Include="ViewModels\CreateCompetitionViewModel.cs" />
+    <Compile Include="ViewModels\ExternalLoginListViewModel.cs" />
+    <Compile Include="ViewModels\FactorViewModel.cs" />
+    <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
+    <Compile Include="ViewModels\ForgotViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\ManageLoginsViewModel.cs" />
+    <Compile Include="ViewModels\IndexViewModel.cs" />
+    <Compile Include="ViewModels\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\ResetPasswordViewModel.cs" />
+    <Compile Include="ViewModels\SendCodeViewModel.cs" />
+    <Compile Include="ViewModels\SetPasswordViewModel.cs" />
+    <Compile Include="ViewModels\VerifyCodeViewModel.cs" />
+    <Compile Include="ViewModels\VerifyPhoneNumberViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -362,6 +377,24 @@
     <Content Include="Views\Competition\Display.cshtml" />
     <Content Include="Views\BattleBits\_ViewStart.cshtml" />
     <Content Include="Views\BattleBits\_Layout.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\SendCode.cshtml" />
+    <Content Include="Views\Account\VerifyCode.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

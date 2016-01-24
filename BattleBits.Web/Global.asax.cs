@@ -20,21 +20,21 @@ namespace BattleBits.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // FOR NOW A COMPETITION FOR EACH GAMETYPE
-            using (var db = new CompetitionContext())
-            {
-                foreach(var type in Enum.GetValues(typeof(GameType)).Cast<GameType>())
-                {
-                    if(db.Competitions.All(c => c.GameType != type))
-                    {
-                        db.Competitions.Add(new Competition
-                        {
-                            Name = $"{type} @ 10 years visug",
-                            GameType = type
-                        });
-                    }
-                }
-                db.SaveChanges();
-            }
+//            using (var db = new CompetitionContext())
+//            {
+//                foreach(var type in Enum.GetValues(typeof(GameType)).Cast<GameType>())
+//                {
+//                    if(db.Competitions.All(c => c.GameType != type))
+//                    {
+//                        db.Competitions.Add(new Competition
+//                        {
+//                            Name = $"{type} @ 10 years visug",
+//                            GameType = type
+//                        });
+//                    }
+//                }
+//                db.SaveChanges();
+//            }
         }
     }
 }

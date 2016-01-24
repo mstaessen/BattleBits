@@ -2,9 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BattleBits.Web.ViewModels
 {
-    public class RegisterBindingModel
+    public class ResetPasswordViewModel
     {
         [Required]
+        [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
@@ -18,5 +19,7 @@ namespace BattleBits.Web.ViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public string Code { get; set; }
     }
 }
