@@ -217,6 +217,7 @@
     <Compile Include="Controllers\BattleBitsController.cs" />
     <Compile Include="Controllers\CompetitionController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DTO\BattleBitsGameDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -225,6 +226,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\GameEntry.cs" />
     <Compile Include="Models\GameType.cs" />
+    <Compile Include="ViewModels\BattleBitsViewModel.cs" />
     <Compile Include="ViewModels\ChangePasswordBindingModel.cs" />
     <Compile Include="Models\Competition.cs" />
     <Compile Include="Models\CompetitionContext.cs" />

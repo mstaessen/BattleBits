@@ -1,4 +1,5 @@
 using System.Web.Mvc;
+using BattleBits.Web.ViewModels;
 
 namespace BattleBits.Web.Controllers
 {
@@ -6,7 +7,9 @@ namespace BattleBits.Web.Controllers
     {
         public ActionResult Display(int id)
         {
-            return View();
+            return View(new BattleBitsViewModel {
+                CompetitionId = id
+            });
         }
 
         public ActionResult LeaderboardTemplate()

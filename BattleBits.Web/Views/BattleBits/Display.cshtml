@@ -1,13 +1,14 @@
-﻿<div ng-app="BattleBits">
+﻿@model BattleBits.Web.ViewModels.BattleBitsViewModel
+
+<div ng-app="BattleBits">
     <ng-view />
 </div>
 
 @section Scripts {
     <script>
-        var hub = $.connection.BattleBitsHub;
         angular
             .module('BattleBits')
-            .config(function ($routeProvider) {
+            .config(function($routeProvider) {
                 $routeProvider
                     .when('/', {
                         controller: 'LeaderboardController',
@@ -25,8 +26,10 @@
                         redirectTo: '/'
                     });
             })
-            .value('CompetitionHub', function () {
-
-            });
+            .constant('Competition', {
+                id: '@Model.CompetitionId',
+                name: '@Model.CompetitionName'
+            })
+            .value('BattleBitsHub', $.connection.BattleBitsHub);
     </script>
 }
