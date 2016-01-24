@@ -29,23 +29,25 @@ namespace BattleBits.Web.Hubs
             });
         }
 
-        private BattleBitsGameScheduledEvent GetGame(int competitionId)
+        private BattleBitsGame GetGame(int competitionId)
         {
             var session = GetSession(competitionId);
             if (session.Game == null) {
-                session.Game = new BattleBitsGame(session.NumberCount) {
-                    StartTime = DateTime.UtcNow.AddSeconds(15)
-                };
+                var date = DateTime.UtcNow;
+                session.Game = new BattleBitsGame(session.NumberCount, new Game {
+                    StartTime = date.AddSeconds(15),
+                    EndTime = date.AddSeconds(60)
+                });
                 Clients.Group(FormatCompetitionGroupName(competitionId)).GameScheduled(CreateBattleBitsGameDTO(session));
             }
-            return CreateBattleBitsGameDTO(session);
+            return session.Game;
         }
 
         private static BattleBitsGameScheduledEvent CreateBattleBitsGameDTO(BattleBitsSession competition)
         {
             return new BattleBitsGameScheduledEvent {
                 Duration = competition.Duration,
-                StartTime = competition.Game.StartTime
+                StartTime = competition.Game.Game.StartTime
             };
         }
 
@@ -54,9 +56,25 @@ namespace BattleBits.Web.Hubs
             return Groups.Remove(Context.ConnectionId, roomName);
         }
 
-        public int NextNumber(int currentNumber, int value)
+        public int NextNumber(int competitionId, int number, int value)
         {
-            return new Random().Next(byte.MaxValue);
+            var game = GetGame(competitionId);
+            if (game.Bytes[number] != value) {
+                throw new Exception("Incorrect Answer");
+            }
+
+            number++;
+            var score = game.Scores.FirstOrDefault(x => x.UserId == Context.User.Identity.GetUserId());
+            if (score == null) {
+                score = new Score {
+                    UserId = Context.User.Identity.GetUserId(),
+                };
+                game.Scores.Add(score);
+            }
+            score.Value = number;
+            score.Duration = DateTime.UtcNow - game.StartTime;
+
+            return number < game.Bytes.Length ? game.Bytes[number] : 0;
         }
 
 

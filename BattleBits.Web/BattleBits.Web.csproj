@@ -231,8 +231,8 @@
     <Compile Include="Hubs\BattleBitsHub.cs" />
     <Compile Include="Models\BattleBitsCompetition.cs" />
     <Compile Include="Models\CompetitionContextInitializer.cs" />
-    <Compile Include="Models\User.cs" />
-    <Compile Include="Models\GameEntry.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Score.cs" />
     <Compile Include="Models\GameType.cs" />
     <Compile Include="ViewModels\AddPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\ChangePasswordViewModel.cs" />
@@ -245,7 +245,6 @@
     <Compile Include="Hubs\IBattleBitsClient.cs" />
     <Compile Include="ViewModels\CompetitionRankingViewModel.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
-    <Compile Include="Models\UserInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />

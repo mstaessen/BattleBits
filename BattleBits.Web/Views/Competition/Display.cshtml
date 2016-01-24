@@ -11,7 +11,7 @@
             <h3 class="panel-title">Ranking @Model.Name</h3>
         </div>
         <div class="panel-body">
-            @if(Model.GameEntries.Any())
+            @if(Model.Scores.Any())
             {
             <table class="table table-striped">
                 <thead>
@@ -24,10 +24,10 @@
                 </thead>
                 <tbody>
                     @{
-                        GameEntry lastEntry = null;
+                        Score lastEntry = null;
                         var currentPlace = 0;
                     }
-                    @foreach(var gameEntry in Model.GameEntries)
+                    @foreach(var gameEntry in Model.Scores)
                     {
                         <tr>
                             <td>

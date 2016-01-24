@@ -10,6 +10,6 @@ namespace BattleBits.Web.ViewModels
 
         public string Name { get; set; }
 
-        public IList<GameEntry> GameEntries { get; set; }
+        public IList<Score> Scores { get; set; }
     }
 }

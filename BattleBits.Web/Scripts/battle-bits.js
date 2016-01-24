@@ -3,7 +3,7 @@
     .controller('LeaderboardController', function() {
 
     })
-    .controller('GamePlayController', function ($scope, $interval, BattleBitsService) {
+    .controller('GamePlayController', function($scope, $interval, BattleBitsService) {
         $scope.guess = 0;
         // TODO load from server
         // NOTE: can one of the HEXs be zero? in that case the printing is sometimes wrong
@@ -13,10 +13,10 @@
         $scope.timeLeft = 45;
         $scope.number = $scope.numbers[$scope.numbersGuessed];
 
-        $scope.isBitActive = function (bitPosition) {
+        $scope.isBitActive = function(bitPosition) {
             return ($scope.guess & (1 << bitPosition)) !== 0;
         };
-​
+
         $scope.toggleBit = function(bitPosition) {
             $scope.guess ^= (1 << bitPosition);
         };
@@ -24,7 +24,7 @@
         var timer = $interval(function() {
             $scope.timeLeft--;
         }, 1000, 45);
-​
+
         var numberWatcher = $scope.$watch('guess', function(newValue) {
             if (newValue === $scope.number) {
                 BattleBitsService
@@ -39,17 +39,16 @@
                             $scope.guess = 0;
                         }
                     }, function() {
-                        
-        });
+
+                    });
             }
         });
-​
-
     })
     .controller('GameDisplayController', function($scope) {
 
     })
-    .service('BattleBitsService', function (BattleBitsHub, $q) {
+    .service('BattleBitsService', function (Competition, BattleBitsHub, $q) {
+
         return {
             joinCompetition: function(competitionId) {
                 var deferred = $q.defer();
@@ -63,10 +62,10 @@
                 return deferred.promise;
             },
             joinGame: function() {
-                
+
             },
             leaveGame: function() {
-                
+
             },
             guess: function(number, guess) {
 
@@ -74,13 +73,13 @@
         };
     })
     .filter('binary', function() {
-        return function (input, length) {
+        return function(input, length) {
             length = length || 8;
             return _.padStart((input >>> 0).toString(2), length, '0');
         };
     })
     .filter('hex', function() {
-        return function (input) {
+        return function(input) {
             return "0x" + input.toString(16);
         };
     });

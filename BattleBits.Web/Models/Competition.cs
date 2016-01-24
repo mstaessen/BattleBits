@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BattleBits.Web.Models
 {
@@ -10,6 +11,8 @@ namespace BattleBits.Web.Models
         public GameType GameType { get; set; }
 
         public string Name { get; set; }
+
+        public virtual ISet<Game> Games { get; set; } 
 
     }
 }
