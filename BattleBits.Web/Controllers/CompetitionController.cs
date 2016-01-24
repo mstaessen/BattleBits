@@ -6,6 +6,7 @@ using System;
 
 namespace BattleBits.Web.Controllers
 {
+    [Authorize]
     public class CompetitionController : Controller
     {
 

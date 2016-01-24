@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BattleBits.Web.DTO;
 using BattleBits.Web.Events;
 using BattleBits.Web.Models;
 using Microsoft.AspNet.Identity;
@@ -10,14 +11,25 @@ using Microsoft.AspNet.SignalR.Hubs;
 
 namespace BattleBits.Web.Hubs
 {
+    [Authorize]
     [HubName("BattleBitsHub")]
     public class BattleBitsHub : Hub<IBattleBitsClient>
     {
         private static readonly IDictionary<int, BattleBitsSession> ActiveSessions = new Dictionary<int, BattleBitsSession>();
 
-        public Task JoinCompetition(int competitionId)
+        public async Task<BattleBitsCompetitionDTO> JoinCompetition(int competitionId)
         {
-            return Groups.Add(Context.ConnectionId, FormatCompetitionGroupName(competitionId));
+            var session = GetSession(competitionId);
+            await Groups.Add(Context.ConnectionId, FormatCompetitionGroupName(competitionId));
+            return CreateBattleBitsCompetitionDTO(session);
+        }
+
+        private BattleBitsCompetitionDTO CreateBattleBitsCompetitionDTO(BattleBitsSession session)
+        {
+            return new BattleBitsCompetitionDTO {
+                Id = session.CompetitionId,
+                Name = session.CompetitionName
+            };
         }
 
         public void JoinGame(int competitionId)
@@ -38,6 +50,7 @@ namespace BattleBits.Web.Hubs
                     StartTime = date.AddSeconds(15),
                     EndTime = date.AddSeconds(60)
                 });
+
                 Clients.Group(FormatCompetitionGroupName(competitionId)).GameScheduled(CreateBattleBitsGameDTO(session));
             }
             return session.Game;
@@ -111,6 +124,8 @@ namespace BattleBits.Web.Hubs
     public class BattleBitsSession
     {
         public BattleBitsGame Game { get; set; }
+
+        public BattleBitsCompetition Competition { get; set; }
 
         public int CompetitionId { get; set; }
 

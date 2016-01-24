@@ -1,7 +1,12 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
-    .controller('LeaderboardController', function() {
+    .controller('LeaderboardController', function ($scope, BattleBitsService) {
+        $scope.nextGame = BattleBitsService.nextGame;
+        $scope.competition = BattleBitsService.competition;
 
+        $scope.join = function() {
+            BattleBitsService.join();
+        };
     })
     .controller('GamePlayController', function($scope, $interval, BattleBitsService) {
         $scope.guess = 0;
@@ -47,30 +52,39 @@
     .controller('GameDisplayController', function($scope) {
 
     })
-    .service('BattleBitsService', function (Competition, BattleBitsHub, $q) {
+    .service('BattleBitsService', function(competitionId, SignalR, $rootScope) {
+        var BatteBitsService = function(competitionId, SignalR) {
+            this.competition = null;
+            this.nextGame = null;
+            this.currentGame = null;
+            var that = this;
 
-        return {
-            joinCompetition: function(competitionId) {
-                var deferred = $q.defer();
-                BattleBitsHub.server.joinCompetition(competitionId)
-                    .done(function() {
-                        deferred.resolve();
-                    })
-                    .fail(function(error) {
-                        deferred.reject(error);
+            var hub = SignalR.BattleBitsHub;
+            SignalR.hub.start().done(function() {
+                hub.server.joinCompetition(competitionId)
+                    .done(function (competition) {
+                        that.competition = competition;
+                        $rootScope.$apply();
+
+                    }).fail(function (error) {
+                        throw error;
                     });
-                return deferred.promise;
-            },
-            joinGame: function() {
+            }).fail(function() {
+                
+            });
 
-            },
-            leaveGame: function() {
+            hub.client.gameScheduled = function(game) {
+                that.nextGame = game;
+                $rootScope.$apply();
+            };
+            
+            this.isInitialized = function() {
+                return that.competition != null;
+            };
 
-            },
-            guess: function(number, guess) {
 
-            }
         };
+        return new BatteBitsService(competitionId, SignalR);
     })
     .filter('binary', function() {
         return function(input, length) {

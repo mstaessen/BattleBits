@@ -3,6 +3,7 @@ using BattleBits.Web.ViewModels;
 
 namespace BattleBits.Web.Controllers
 {
+    [Authorize]
     public class BattleBitsController : Controller
     {
         public ActionResult Display(int id)

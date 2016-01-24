@@ -5,6 +5,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/signalr/hubs"></script>
     <script>
         angular
             .module('BattleBits')
@@ -26,10 +27,7 @@
                         redirectTo: '/'
                     });
             })
-            .constant('Competition', {
-                id: '@Model.CompetitionId',
-                name: '@Model.CompetitionName'
-            })
-            .value('BattleBitsHub', $.connection.BattleBitsHub);
+            .constant('competitionId', @Model.CompetitionId)
+            .value('SignalR', $.connection);
     </script>
 }

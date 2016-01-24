@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="text-center">BattleBits</h1>
+            <h1 class="text-center">BattleBits: {{ competition.name }}</h1>
         </div>
     </div>
     <div class="row">
@@ -62,10 +62,12 @@
                     <h3 class="panel-title">Next Game</h3>
                 </div>
                 <div class="panel-body">
-                    <p>Waiting for players...</p>
-                    <p class="text-center">
-                        <button class="btn btn-primary">Join</button>
-                    </p>
+                    <div ng-hide="nextGame != null">
+                        <p>Waiting for players...</p>
+                        <p class="text-center">
+                            <button class="btn btn-primary" ng-click="join()">Join</button>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
