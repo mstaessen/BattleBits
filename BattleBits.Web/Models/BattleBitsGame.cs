@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace BattleBits.Web.Models
 {
@@ -24,7 +25,36 @@ namespace BattleBits.Web.Models
         public BattleBitsGame(int size)
         {
             Bytes = new byte[size];
-            Random.NextBytes(Bytes);
+            FillWithRandomBytes();
+        }
+
+        /// <summary>
+        /// Random bytes with constraints:
+        /// - No 2 bytes are the same
+        /// - Zeros are not allowed
+        /// - No 2 contiguous bytes have the same 4 bits in front or at the end
+        /// - No 2 contiguous bytes have the same 4 bits parts just swapped
+        /// </summary>
+        private void FillWithRandomBytes() {
+            HashSet<int> set = new HashSet<int>();
+            int prevA = 0,
+                prevB = 0,
+                a = 0,
+                b = 0;
+            for (int i = 0; i < Bytes.Length; i++)
+            {
+                while (prevA == a
+                    || prevB == b
+                    || (prevB == a && prevA == b)
+                    || !set.Add((a << 4) | b))
+                {
+                    a = Random.Next(15) + 1;
+                    b = Random.Next(15) + 1;
+                }
+                Bytes[i] = (byte)(a << 4 | b);
+                prevA = a;
+                prevB = b;
+            }
         }
     }
 }
