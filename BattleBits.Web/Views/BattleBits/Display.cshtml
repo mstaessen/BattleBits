@@ -1,13 +1,8 @@
-﻿@{
-    Layout = "~/Views/Shared/_BareLayout.cshtml";
-}
-
-<div ng-app="BattleBits">
+﻿<div ng-app="BattleBits">
     <ng-view />
 </div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/battle-bits")
     <script>
         var hub = $.connection.BattleBitsHub;
         angular
