@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BattleBits.Web.DTO;
 using BattleBits.Web.Events;
@@ -20,40 +21,26 @@ namespace BattleBits.Web.Hubs
         public async Task<BattleBitsCompetitionDTO> JoinCompetition(int competitionId)
         {
             var session = GetSession(competitionId);
+            session.Players[Context.ConnectionId] = false;
             await Groups.Add(Context.ConnectionId, FormatCompetitionGroupName(competitionId));
             return CreateBattleBitsCompetitionDTO(session);
         }
 
-        private BattleBitsCompetitionDTO CreateBattleBitsCompetitionDTO(BattleBitsSession session)
-        {
-            return new BattleBitsCompetitionDTO {
-                Id = session.CompetitionId,
-                Name = session.CompetitionName
-            };
-        }
-
         public void JoinGame(int competitionId)
         {
-            var game = GetGame(competitionId);
-            Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerJoined(new BattleBitsPlayerJoinedEvent {
-                UserId = Context.User.Identity.GetUserId(),
-                UserName = Context.User.Identity.GetUserName()
-            });
-        }
-
-        private BattleBitsGame GetGame(int competitionId)
-        {
             var session = GetSession(competitionId);
-            if (session.Game == null) {
-                var date = DateTime.UtcNow;
-                session.Game = new BattleBitsGame(session.NumberCount, new Game {
-                    StartTime = date.AddSeconds(15),
-                    EndTime = date.AddSeconds(60)
-                });
-
+            BattleBitsGame game;
+            if (GetOrCreateGame(session, out game)) {
                 Clients.Group(FormatCompetitionGroupName(competitionId)).GameScheduled(CreateBattleBitsGameDTO(session));
             }
-            return session.Game;
+
+            if (game != null) {
+                session.Players[Context.ConnectionId] = true;
+                Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerJoined(new BattleBitsPlayerJoinedEvent {
+                    UserId = Context.User.Identity.GetUserId(),
+                    UserName = Context.User.Identity.GetUserName()
+                });
+            }
         }
 
         private static BattleBitsGameScheduledEvent CreateBattleBitsGameDTO(BattleBitsSession competition)
@@ -71,9 +58,10 @@ namespace BattleBits.Web.Hubs
 
         public int NextNumber(int competitionId, int number, int value)
         {
-            var game = GetGame(competitionId);
-            if (game.Bytes[number] != value) {
-                throw new Exception("Incorrect Answer");
+            var session = GetSession(competitionId);
+            var game = session.Game;
+            if (game == null) {
+                throw new Exception("No current game");
             }
 
             number++;
@@ -93,6 +81,9 @@ namespace BattleBits.Web.Hubs
 
         public override Task OnDisconnected(bool stopCalled)
         {
+            // TODO: Stop tracking session if last user disconnects
+            // TODO: Cancel scheduled game when last player disconnects
+            // Can use BBSession.Players<ConnectionId, Playing or not> to determine this
             return base.OnDisconnected(stopCalled);
         }
 
@@ -115,6 +106,60 @@ namespace BattleBits.Web.Hubs
             return ActiveSessions[competitionId];
         }
 
+        private bool GetOrCreateGame(BattleBitsSession session, out BattleBitsGame game)
+        {
+            if (session == null) {
+                throw new ArgumentNullException(nameof(session));
+            }
+            if (session.Game != null) {
+                game = session.Game;
+                return false;
+            }
+
+            Action<BattleBitsGame> onGameStart = g => {
+                var evt = CreateGameStartedEvent(g);
+                Clients.Group(FormatCompetitionGroupName(session.CompetitionId)).GameStarted(evt);
+            };
+            Action<BattleBitsGame> onGameEnd = g => {
+                var evt = CreateGameEndedEvent(g);
+                Clients.Group(FormatCompetitionGroupName(session.CompetitionId)).GameEnded(evt);
+            };
+            game = session.CreateGame(onGameStart, onGameEnd);
+            return true;
+        }
+
+        private static BattleBitsGameStartedEvent CreateGameStartedEvent(BattleBitsGame game)
+        {
+            return new BattleBitsGameStartedEvent {
+                EndTime = game.EndTime,
+                Duration = Convert.ToInt32(game.Duration.TotalSeconds),
+                Numbers = game.Bytes.Select(Convert.ToInt32).ToArray()
+            };
+        }
+
+        private static BattleBitsGameEndedEvent CreateGameEndedEvent(BattleBitsGame game)
+        {
+            return new BattleBitsGameEndedEvent {
+                StartTime = game.StartTime,
+                EndTime = game.EndTime,
+                Duration = Convert.ToInt32(game.Duration.TotalSeconds),
+                Scores = game.Scores.Select(x => new ScoreDTO {
+                    Name = "TODO Name", // TODO,
+                    Company = "TODO Company", // TODO
+                    Score = x.Value,
+                    Time = x.Duration.TotalSeconds
+                }).ToList()
+            };
+        }
+
+        private BattleBitsCompetitionDTO CreateBattleBitsCompetitionDTO(BattleBitsSession session)
+        {
+            return new BattleBitsCompetitionDTO {
+                Id = session.CompetitionId,
+                Name = session.CompetitionName
+            };
+        }
+
         private static string FormatCompetitionGroupName(int competitionId)
         {
             return $"Competition_{competitionId}";
@@ -123,7 +168,8 @@ namespace BattleBits.Web.Hubs
 
     public class BattleBitsSession
     {
-        public BattleBitsGame Game { get; set; }
+        private Timer gameStartTimer;   
+        private Timer gameEndTimer;   
 
         public BattleBitsCompetition Competition { get; set; }
 
@@ -134,5 +180,69 @@ namespace BattleBits.Web.Hubs
         public int NumberCount { get; set; }
 
         public int Duration { get; set; }
+
+        public BattleBitsGame Game { get; private set; }
+
+        public IDictionary<string, bool> Players { get; set; }
+
+        // TODO: Prevent games being created when there is a game running. Or make a queue... But in that case you should also track user-game assignments
+        public BattleBitsGame CreateGame(Action<BattleBitsGame> onGameStart, Action<BattleBitsGame> onGameEnd)
+        {
+            var date = DateTime.UtcNow;
+            var game = new BattleBitsGame(NumberCount, new Game {
+                StartTime = date.AddSeconds(15),
+                EndTime = date.AddSeconds(60)
+            });
+
+            gameStartTimer = new Timer(state => {
+                onGameStart(Game);
+                gameStartTimer.Dispose();
+                gameStartTimer = null;
+            }, null, Game.StartTime - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
+
+            gameStartTimer = new Timer(state => {
+                using (var context = new CompetitionContext()) {
+                    var competition = context.Competitions.FirstOrDefault(x => x.Id == CompetitionId);
+                    if (competition != null) {
+                        competition.Games.Add(Game.Game);
+                        context.SaveChanges();
+                    }
+                }
+                onGameEnd(Game);
+                gameEndTimer.Dispose();
+                gameEndTimer = null;
+                Game = null;
+
+                foreach (var connectionId in Players.Keys) {
+                    // All players must explicitly join before new game is scheduled.
+                    Players[connectionId] = false;
+                }
+            }, null, Game.EndTime - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
+
+            Game = game;
+            return Game;
+        }
+
+        public bool CancelGame()
+        {
+            if (Game != null && Game.StartTime > DateTime.UtcNow) {
+                // Game already started
+                return false;
+            }
+
+            if (gameStartTimer != null) {
+                gameStartTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+                gameStartTimer.Dispose();
+                gameStartTimer = null;
+            }
+
+            if (gameEndTimer != null) {
+                gameEndTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+                gameEndTimer.Dispose();
+                gameEndTimer = null;
+            }
+
+            return true;
+        }
     }
 }
