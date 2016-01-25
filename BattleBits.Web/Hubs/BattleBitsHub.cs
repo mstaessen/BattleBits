@@ -183,13 +183,13 @@ namespace BattleBits.Web.Hubs
 
         public BattleBitsGame Game { get; private set; }
 
-        public IDictionary<string, bool> Players { get; set; }
+        public IDictionary<string, bool> Players { get; } = new Dictionary<string, bool>();
 
         // TODO: Prevent games being created when there is a game running. Or make a queue... But in that case you should also track user-game assignments
         public BattleBitsGame CreateGame(Action<BattleBitsGame> onGameStart, Action<BattleBitsGame> onGameEnd)
         {
             var date = DateTime.UtcNow;
-            var game = new BattleBitsGame(NumberCount, new Game {
+            Game = new BattleBitsGame(NumberCount, new Game {
                 StartTime = date.AddSeconds(15),
                 EndTime = date.AddSeconds(60)
             });
@@ -219,7 +219,6 @@ namespace BattleBits.Web.Hubs
                 }
             }, null, Game.EndTime - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
 
-            Game = game;
             return Game;
         }
 

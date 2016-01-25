@@ -63,9 +63,25 @@
                 </div>
                 <div class="panel-body">
                     <div ng-hide="nextGame != null">
-                        <p>Waiting for players...</p>
+                        <p ng-hide="nextGame.players">Waiting for players...</p>
+                        <table class="table table-striped" ng-show="nextGame.players">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Company</th>
+                                    <th>High Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="player in nextGame.player">
+                                    <td>{{ player.name }}</td>
+                                    <td>{{ player.company }}</td>
+                                    <td>{{ player.highScore }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <p class="text-center">
-                            <button class="btn btn-primary" ng-click="join()">Join</button>
+                            <button class="btn btn-primary" ng-click="playGame()">Join</button>
                         </p>
                     </div>
                 </div>
