@@ -228,7 +228,7 @@
     <Compile Include="Events\BattleBitsGameStartedEvent.cs" />
     <Compile Include="Events\BattleBitsPlayerJoinedEvent.cs" />
     <Compile Include="Events\BattleBitsPlayerLeftEvent.cs" />
-    <Compile Include="Events\ScoreDTO.cs" />
+    <Compile Include="DTO\ScoreDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

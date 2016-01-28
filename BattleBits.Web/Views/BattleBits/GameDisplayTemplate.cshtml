@@ -1,5 +1,20 @@
-﻿@{ 
+﻿@{
     Layout = null;
 }
 
-<h1>display game</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">BattleBits: {{ competition.name }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3" ng-repeat="number in game.numbers">
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <p class="text-center">{{ number | hex }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

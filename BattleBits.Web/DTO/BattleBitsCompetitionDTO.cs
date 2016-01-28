@@ -9,5 +9,6 @@ namespace BattleBits.Web.DTO
 
         [JsonProperty("name")]
         public string Name { get; set; }
+
     }
 }

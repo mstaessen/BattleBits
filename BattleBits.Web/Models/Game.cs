@@ -9,7 +9,7 @@ namespace BattleBits.Web.Models
         [Key]
         public int Id { get; protected set; }
 
-        public virtual ISet<Score> Scores { get; set; }
+        public virtual ISet<Score> Scores { get; protected set; } = new HashSet<Score>();
 
         public DateTime StartTime { get; set; }
 
@@ -17,7 +17,7 @@ namespace BattleBits.Web.Models
 
         public TimeSpan Duration => EndTime - StartTime;
 
-        public virtual Competition Competition { get; set; }
+        public virtual Competition Competition { get; protected set; }
 
     }
 }

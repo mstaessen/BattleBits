@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BattleBits.Web.DTO;
 using Newtonsoft.Json;
 
 namespace BattleBits.Web.Events

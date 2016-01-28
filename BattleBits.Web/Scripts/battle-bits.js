@@ -1,36 +1,47 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
-    .controller('LeaderboardController', function ($scope, BattleBitsService, $location) {
+    .controller('LeaderboardController', function ($scope, BattleBitsService, $location, $interval) {
         $scope.nextGame = BattleBitsService.nextGame;
-        $scope.competition = BattleBitsService.competition;
-        $scope.playGame = function() {
-            BattleBitsService.playGame();
-        };
+        BattleBitsService.onGameScheduled($scope, function () {
+            $scope.nextGame = BattleBitsService.nextGame;
+            $interval(function () {
+                $scope.timeTillNextGame--;
+            }, 1000, $scope.nextGame.start);
+        });
 
+        $scope.competition = BattleBitsService.competition;
         BattleBitsService.onCompetitionJoined($scope, function () {
             $scope.competition = BattleBitsService.competition;
         });
-        
-        BattleBitsService.onGameScheduled($scope, function () {
-            $scope.nextGame = BattleBitsService.nextGame;
-        });
 
         BattleBitsService.onGameStarted($scope, function () {
-            $location.path('/viewer');
+            if (BattleBitsService.enlisted) {
+                $location.path('/play');
+            } else {
+                $location.path('/viewer');
+            }
         });
 
         BattleBitsService.onGameEnded($scope, function () {
             // TODO update last game
         });
+
+        $scope.playGame = function () {
+            BattleBitsService.playGame();
+            $scope.enlisted = true;
+        };
     })
-    .controller('GamePlayController', function($scope, $interval, BattleBitsService) {
+    .controller('GamePlayController', function ($scope, $interval, BattleBitsService, $location) {
+        if (BattleBitsService.currentGame == null) {
+            $location.path('/');
+        }
+        var currentGame = BattleBitsService.currentGame;
+
         $scope.guess = 0;
-        // TODO load from server
-        // NOTE: can one of the HEXs be zero? in that case the printing is sometimes wrong
-        $scope.numbers = [21, 59, 192, 204, 153, 99, 66, 12, 199, 200, 222, 250, 21, 59, 192, 204, 153, 99, 66, 12, 199, 200, 222, 250];
         $scope.numbersGuessed = 0;
+        $scope.numbers = currentGame.numbers;
         $scope.numbersToGuess = $scope.numbers.length;
-        $scope.timeLeft = 45;
+        $scope.timeLeft = currentGame.duration;
         $scope.number = $scope.numbers[$scope.numbersGuessed];
 
         $scope.isBitActive = function(bitPosition) {
@@ -43,31 +54,48 @@
 
         var timer = $interval(function() {
             $scope.timeLeft--;
-        }, 1000, 45);
+        }, 1000, currentGame.duration);
+
+        BattleBitsService.onGameEnded($scope, function () {
+            $location.path('/score');
+        });
 
         var numberWatcher = $scope.$watch('guess', function(newValue) {
             if (newValue === $scope.number) {
-                BattleBitsService
-                    .guess($scope.numbersGuessed, newValue)
-                    .then(function(nextNumber) {
-                        if (++$scope.numbersGuessed === $scope.numbersToGuess) {
+                BattleBitsService.nextNumber($scope.numbersGuessed, newValue)
+                    .then(function() {
+                        $scope.numbersGuessed++;
+                        if ($scope.numbersGuessed === $scope.numbersToGuess) {
                             $interval.cancel(timer);
-                            // TODO Notify that all bits are solved
+                            // TODO $location.path('/score/' + time + ) --> show score
                         } else {
-                            // assign next number
                             $scope.number = $scope.numbers[$scope.numbersGuessed];
                             $scope.guess = 0;
                         }
                     }, function() {
-
+                        // Try again, wrong guess
                     });
             }
         });
     })
-    .controller('GameDisplayController', function($scope) {
+    .controller('GameDisplayController', function ($scope, BattleBitsService, $location, $interval) {
+        $scope.competition = BattleBitsService.competition;
+        $scope.game = BattleBitsService.currentGame;
 
+        if ($scope.game == null) {
+            $location.path('/');
+        }
+
+        $scope.timeLeft = $scope.game.duration;
+        $interval(function () {
+            $scope.timeLeft--;
+        }, 1000, $scope.game.duration);
+
+        BattleBitsService.onGameEnded($scope, function () {
+            $location.path('/');
+        });
     })
-    .service('BattleBitsService', function(competitionId, SignalR, $rootScope) {
+    .service('BattleBitsService', function(competitionId, SignalR, $rootScope, $q) {
         var BatteBitsService = function(competitionId, SignalR) {
             this.competition = null;
             this.nextGame = null;
@@ -93,36 +121,41 @@
             hub.client.gameScheduled = function(game) {
                 $rootScope.$apply(function() {
                     that.nextGame = game;
+                    $rootScope.$emit('game-scheduled');
                 });
             };
 
             hub.client.playerJoined = function (player) {
                 $rootScope.$apply(function () {
-                    if (that.nextGame !== null) {
-                        if (that.nextGame.players === null) {
+                    if (that.nextGame != null) {
+                        if (that.nextGame.players == null) {
                             that.nextGame.players = [];
                         }
                         that.nextGame.players.push(player);
+                        $rootScope.$emit('player-joined');
                     }
-                    $rootScope.$emit('player-joined');
                 });
             };
 
             hub.client.playerLeft = function (player) {
                 $rootScope.$apply(function () {
-                    // TODO
+                    $rootScope.$emit('player-left');
                 });
             };
 
             hub.client.gameStarted = function (game) {
                 $rootScope.$apply(function() {
-                    that.nextGame = game;
+                    that.currentGame = game;
+                    that.nextGame = null;
+                    $rootScope.$emit('game-started');
                 });
             };
 
             hub.client.gameEnded = function (game) {
-                $rootScope.$apply(function() {
+                $rootScope.$apply(function () {
+                    that.currentGame = null;
                     that.lastGame = game;
+                    $rootScope.$emit('game-ended');
                 });
             };
 
@@ -136,6 +169,17 @@
                     });
             };
 
+            this.nextNumber = function (number, value) {
+                var deferred = $q.defer();
+                hub.server.nextNumber(competitionId, number, value)
+                    .done(function (nextNumber) {
+                        deferred.resolve();
+                    })
+                    .fail(function () {
+                        deferred.reject();
+                    });
+                return deferred.promise;
+            };
 
             this.onCompetitionJoined = function (scope, callback) {
                 var unsubscribe = $rootScope.$on('competition-joined', callback);

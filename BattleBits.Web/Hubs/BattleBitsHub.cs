@@ -47,7 +47,8 @@ namespace BattleBits.Web.Hubs
         {
             return new BattleBitsGameScheduledEvent {
                 Duration = competition.Duration,
-                StartTime = competition.Game.Game.StartTime
+                StartTime = competition.Game.StartTime,
+                Delay = Convert.ToInt32((competition.Game.StartTime - DateTime.UtcNow).TotalSeconds)
             };
         }
 
@@ -83,7 +84,6 @@ namespace BattleBits.Web.Hubs
         {
             // TODO: Stop tracking session if last user disconnects
             // TODO: Cancel scheduled game when last player disconnects
-            // Can use BBSession.Players<ConnectionId, Playing or not> to determine this
             return base.OnDisconnected(stopCalled);
         }
 
@@ -144,15 +144,17 @@ namespace BattleBits.Web.Hubs
                 EndTime = game.EndTime,
                 Duration = Convert.ToInt32(game.Duration.TotalSeconds),
                 Scores = game.Scores.Select(x => new ScoreDTO {
-                    Name = "TODO Name", // TODO,
-                    Company = "TODO Company", // TODO
+                    Player = new PlayerDTO {
+                        Name = "TODO Name", // TODO,
+                        Company = "TODO Company", // TODO
+                    },
                     Score = x.Value,
                     Time = x.Duration.TotalSeconds
                 }).ToList()
             };
         }
 
-        private BattleBitsCompetitionDTO CreateBattleBitsCompetitionDTO(BattleBitsSession session)
+        private static BattleBitsCompetitionDTO CreateBattleBitsCompetitionDTO(BattleBitsSession session)
         {
             return new BattleBitsCompetitionDTO {
                 Id = session.CompetitionId,
@@ -200,7 +202,7 @@ namespace BattleBits.Web.Hubs
                 gameStartTimer = null;
             }, null, Game.StartTime - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
 
-            gameStartTimer = new Timer(state => {
+            gameEndTimer = new Timer(state => {
                 using (var context = new CompetitionContext()) {
                     var competition = context.Competitions.FirstOrDefault(x => x.Id == CompetitionId);
                     if (competition != null) {
@@ -213,7 +215,7 @@ namespace BattleBits.Web.Hubs
                 gameEndTimer = null;
                 Game = null;
 
-                foreach (var connectionId in Players.Keys) {
+                foreach (var connectionId in Players.Keys.ToList()) {
                     // All players must explicitly join before new game is scheduled.
                     Players[connectionId] = false;
                 }

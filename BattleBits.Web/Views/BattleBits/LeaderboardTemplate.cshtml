@@ -62,28 +62,29 @@
                     <h3 class="panel-title">Next Game</h3>
                 </div>
                 <div class="panel-body">
-                    <div ng-hide="nextGame != null">
-                        <p ng-hide="nextGame.players">Waiting for players...</p>
-                        <table class="table table-striped" ng-show="nextGame.players">
+                    <p ng-hide="nextGame" class="text-center">Waiting for next game...</p>
+                    <div ng-show="nextGame">
+                        <p ng-hide="nextGame.players" class="text-center">Waiting for players...</p>
+                        <table ng-show="nextGame.players" class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Company</th>
-                                    <th>High Score</th>
-                                </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>High Score</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="player in nextGame.player">
-                                    <td>{{ player.name }}</td>
-                                    <td>{{ player.company }}</td>
-                                    <td>{{ player.highScore }}</td>
-                                </tr>
+                            <tr ng-repeat="player in nextGame.players">
+                                <td>{{ player.name }}</td>
+                                <td>{{ player.company }}</td>
+                                <td>{{ player.highScore }}</td>
+                            </tr>
                             </tbody>
                         </table>
-                        <p class="text-center">
-                            <button class="btn btn-primary" ng-click="playGame()">Join</button>
-                        </p>
                     </div>
+                    <p class="text-center" ng-hide="enlisted">
+                        <button class="btn btn-primary" ng-click="playGame()">Join</button>
+                    </p>
                 </div>
             </div>
         </div>

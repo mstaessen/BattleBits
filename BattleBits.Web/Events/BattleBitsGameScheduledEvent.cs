@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using BattleBits.Web.DTO;
 using Newtonsoft.Json;
 
 namespace BattleBits.Web.Events
@@ -8,7 +10,12 @@ namespace BattleBits.Web.Events
         [JsonProperty("start")]
         public DateTime StartTime { get; set; }
 
+        [JsonProperty("delay")]
+        public int Delay { get; set; }
+
         [JsonProperty("duration")]
         public int Duration { get; set; }
+
+        public IList<PlayerDTO> Players { get; set; } = new List<PlayerDTO>();
     }
 }

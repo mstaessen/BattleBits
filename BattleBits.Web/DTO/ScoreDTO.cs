@@ -1,7 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace BattleBits.Web.Events
+namespace BattleBits.Web.DTO
 {
     public class ScoreDTO
     {
@@ -11,6 +10,12 @@ namespace BattleBits.Web.Events
         [JsonProperty("score")]
         public double Score { get; set; }
 
+        [JsonProperty("player")]
+        public PlayerDTO Player { get; set; }
+    }
+
+    public class PlayerDTO
+    {
         [JsonProperty("name")]
         public string Name { get; set; }
 
