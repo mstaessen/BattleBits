@@ -7,8 +7,8 @@ namespace BattleBits.Web.DTO
         [JsonProperty("userId")]
         public string UserId { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("userName")]
+        public string UserName { get; set; }
 
         [JsonProperty("company")]
         public string Company { get; set; }

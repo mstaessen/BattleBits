@@ -2,6 +2,7 @@
     .module('BattleBits', ['ngRoute'])
     .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', function ($scope, BattleBitsService, $location, $interval, gameUrl) {
         $scope.nextGame = BattleBitsService.nextGame;
+        $scope.previousGame = BattleBitsService.previousGame;
         $scope.gameUrl = gameUrl;
         $scope.competition = BattleBitsService.competition;
 
@@ -25,7 +26,7 @@
         });
 
         BattleBitsService.onGameEnded($scope, function () {
-            // TODO update last game
+            $scope.previousGame = BattleBitsService.previousGame;
         });
 
         $scope.playGame = function () {
@@ -156,7 +157,7 @@
             hub.client.gameEnded = function (game) {
                 $rootScope.$apply(function () {
                     that.currentGame = null;
-                    that.lastGame = game;
+                    that.previousGame = game;
                     $rootScope.$emit('game-ended');
                 });
             };

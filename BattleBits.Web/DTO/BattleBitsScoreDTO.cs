@@ -4,6 +4,9 @@ namespace BattleBits.Web.DTO
 {
     public class BattleBitsScoreDTO
     {
+        [JsonProperty("rank")]
+        public int Rank { get; set; }
+
         [JsonProperty("time")]
         public double Time { get; set; }
 

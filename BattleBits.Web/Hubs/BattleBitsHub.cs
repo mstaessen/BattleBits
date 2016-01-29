@@ -168,22 +168,26 @@ namespace BattleBits.Web.Hubs
 
         private static BattleBitsGameEndedEvent CreateGameEndedEvent(BattleBitsGame game)
         {
+            var rank = 1;
             return new BattleBitsGameEndedEvent {
                 StartTime = game.StartTime,
                 EndTime = game.EndTime,
                 Duration = Convert.ToInt32(game.Duration.TotalSeconds),
-                Scores = game.Scores.Select(s => {
-                    var player = game.Players.First(u => u.UserId == s.UserId);
-                    return new BattleBitsScoreDTO {
-                        BattleBitsPlayer = new BattleBitsPlayerDTO {
-                            Name = player.UserName,
-                            Company = player.Company,
-                            HighScore = player.HighScore.HasValue ? Math.Max(s.Value, player.HighScore.Value) : s.Value
-                        },
-                        Score = s.Value,
-                        Time = s.Duration.TotalSeconds
-                    };
-                }).ToList()
+                Scores = game.Scores
+                    .OrderByDescending(x => x.Value)
+                    .ThenByDescending(x => x.Duration).Select(s => {
+                        var player = game.Players.First(u => u.UserId == s.UserId);
+                        return new BattleBitsScoreDTO {
+                            BattleBitsPlayer = new BattleBitsPlayerDTO {
+                                UserName = player.UserName,
+                                Company = player.Company,
+                                HighScore = player.HighScore.HasValue ? Math.Max(s.Value, player.HighScore.Value) : s.Value
+                            },
+                            Rank = rank++,
+                            Score = s.Value,
+                            Time = Math.Round(s.Duration.TotalSeconds, 2)
+                        };
+                    }).ToList()
             };
         }
 
