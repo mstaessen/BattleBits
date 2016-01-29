@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <ApplicationInsightsResourceId>/subscriptions/aaa256c1-1980-4fff-b72b-1a7757a99a85/resourcegroups/CapgeminiCompetitions/providers/microsoft.insights/components/capgemini-competitions</ApplicationInsightsResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +45,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.0.1011, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.1.2.3\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.1.2.3\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.1.2.3\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.1.2.3\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.1.2.3\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=1.2.3.490, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
       <Private>True</Private>
@@ -223,17 +252,20 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DTO\BattleBitsCompetitionDTO.cs" />
+    <Compile Include="DTO\BattleBitsPlayerDTO.cs" />
     <Compile Include="Events\BattleBitsGameEndedEvent.cs" />
     <Compile Include="Events\BattleBitsGameScheduledEvent.cs" />
     <Compile Include="Events\BattleBitsGameStartedEvent.cs" />
     <Compile Include="Events\BattleBitsPlayerJoinedEvent.cs" />
     <Compile Include="Events\BattleBitsPlayerLeftEvent.cs" />
-    <Compile Include="DTO\ScoreDTO.cs" />
+    <Compile Include="DTO\BattleBitsScoreDTO.cs" />
+    <Compile Include="Events\BattleBitsPlayerScoredEvent.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\UrlHelperExtensions.cs" />
     <Compile Include="Hubs\BattleBitsHub.cs" />
+    <Compile Include="Hubs\BattleBitsPlayer.cs" />
     <Compile Include="Models\BattleBitsCompetition.cs" />
     <Compile Include="Models\CompetitionContextInitializer.cs" />
     <Compile Include="Models\Game.cs" />
@@ -277,6 +309,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\ai.0.15.0-build58334.js" />
+    <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\angular-route.min.js" />
     <Content Include="Scripts\battle-bits.js" />
     <Content Include="Scripts\angular.min.js" />
@@ -304,46 +338,46 @@
     <Content Include="Content\_bootstrap-mincer.scss" />
     <Content Include="Content\_bootstrap-sprockets.scss" />
     <Content Include="Content\bootstrap.scss" />
-    <Content Include="Content\bootstrap\_alerts.scss" />
-    <Content Include="Content\bootstrap\_badges.scss" />
-    <Content Include="Content\bootstrap\_breadcrumbs.scss" />
-    <Content Include="Content\bootstrap\_button-groups.scss" />
-    <Content Include="Content\bootstrap\_buttons.scss" />
-    <Content Include="Content\bootstrap\_carousel.scss" />
-    <Content Include="Content\bootstrap\_close.scss" />
-    <Content Include="Content\bootstrap\_code.scss" />
-    <Content Include="Content\bootstrap\_component-animations.scss" />
-    <Content Include="Content\bootstrap\_dropdowns.scss" />
-    <Content Include="Content\bootstrap\_forms.scss" />
-    <Content Include="Content\bootstrap\_glyphicons.scss" />
-    <Content Include="Content\bootstrap\_grid.scss" />
-    <Content Include="Content\bootstrap\_input-groups.scss" />
-    <Content Include="Content\bootstrap\_jumbotron.scss" />
-    <Content Include="Content\bootstrap\_labels.scss" />
-    <Content Include="Content\bootstrap\_list-group.scss" />
-    <Content Include="Content\bootstrap\_media.scss" />
-    <Content Include="Content\bootstrap\_mixins.scss" />
-    <Content Include="Content\bootstrap\_modals.scss" />
-    <Content Include="Content\bootstrap\_navbar.scss" />
-    <Content Include="Content\bootstrap\_navs.scss" />
-    <Content Include="Content\bootstrap\_normalize.scss" />
-    <Content Include="Content\bootstrap\_pager.scss" />
-    <Content Include="Content\bootstrap\_pagination.scss" />
-    <Content Include="Content\bootstrap\_panels.scss" />
-    <Content Include="Content\bootstrap\_popovers.scss" />
-    <Content Include="Content\bootstrap\_print.scss" />
-    <Content Include="Content\bootstrap\_progress-bars.scss" />
-    <Content Include="Content\bootstrap\_responsive-embed.scss" />
-    <Content Include="Content\bootstrap\_responsive-utilities.scss" />
-    <Content Include="Content\bootstrap\_scaffolding.scss" />
-    <Content Include="Content\bootstrap\_tables.scss" />
-    <Content Include="Content\bootstrap\_theme.scss" />
-    <Content Include="Content\bootstrap\_thumbnails.scss" />
-    <Content Include="Content\bootstrap\_tooltip.scss" />
-    <Content Include="Content\bootstrap\_type.scss" />
-    <Content Include="Content\bootstrap\_utilities.scss" />
-    <Content Include="Content\bootstrap\_variables.scss" />
-    <Content Include="Content\bootstrap\_wells.scss" />
+    <Content Include="Content\_bootstrap\_alerts.scss" />
+    <Content Include="Content\_bootstrap\_badges.scss" />
+    <Content Include="Content\_bootstrap\_breadcrumbs.scss" />
+    <Content Include="Content\_bootstrap\_button-groups.scss" />
+    <Content Include="Content\_bootstrap\_buttons.scss" />
+    <Content Include="Content\_bootstrap\_carousel.scss" />
+    <Content Include="Content\_bootstrap\_close.scss" />
+    <Content Include="Content\_bootstrap\_code.scss" />
+    <Content Include="Content\_bootstrap\_component-animations.scss" />
+    <Content Include="Content\_bootstrap\_dropdowns.scss" />
+    <Content Include="Content\_bootstrap\_forms.scss" />
+    <Content Include="Content\_bootstrap\_glyphicons.scss" />
+    <Content Include="Content\_bootstrap\_grid.scss" />
+    <Content Include="Content\_bootstrap\_input-groups.scss" />
+    <Content Include="Content\_bootstrap\_jumbotron.scss" />
+    <Content Include="Content\_bootstrap\_labels.scss" />
+    <Content Include="Content\_bootstrap\_list-group.scss" />
+    <Content Include="Content\_bootstrap\_media.scss" />
+    <Content Include="Content\_bootstrap\_mixins.scss" />
+    <Content Include="Content\_bootstrap\_modals.scss" />
+    <Content Include="Content\_bootstrap\_navbar.scss" />
+    <Content Include="Content\_bootstrap\_navs.scss" />
+    <Content Include="Content\_bootstrap\_normalize.scss" />
+    <Content Include="Content\_bootstrap\_pager.scss" />
+    <Content Include="Content\_bootstrap\_pagination.scss" />
+    <Content Include="Content\_bootstrap\_panels.scss" />
+    <Content Include="Content\_bootstrap\_popovers.scss" />
+    <Content Include="Content\_bootstrap\_print.scss" />
+    <Content Include="Content\_bootstrap\_progress-bars.scss" />
+    <Content Include="Content\_bootstrap\_responsive-embed.scss" />
+    <Content Include="Content\_bootstrap\_responsive-utilities.scss" />
+    <Content Include="Content\_bootstrap\_scaffolding.scss" />
+    <Content Include="Content\_bootstrap\_tables.scss" />
+    <Content Include="Content\_bootstrap\_theme.scss" />
+    <Content Include="Content\_bootstrap\_thumbnails.scss" />
+    <Content Include="Content\_bootstrap\_tooltip.scss" />
+    <Content Include="Content\_bootstrap\_type.scss" />
+    <Content Include="Content\_bootstrap\_utilities.scss" />
+    <Content Include="Content\_bootstrap\_variables.scss" />
+    <Content Include="Content\_bootstrap\_wells.scss" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jquery.signalr.min.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -373,6 +407,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <Content Include="Content\battle-bits.scss" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Project_Readme.html" />
     <Content Include="Views\BattleBits\Display.cshtml" />
     <Content Include="Views\BattleBits\LeaderboardTemplate.cshtml" />
@@ -399,6 +436,11 @@
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <None Include="Properties\PublishProfiles\capgemini-competitions - Web Deploy.pubxml" />
+    <Content Include="Service References\Application Insights\ConnectedService.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

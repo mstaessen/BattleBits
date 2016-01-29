@@ -1,17 +1,19 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
-    .controller('LeaderboardController', function ($scope, BattleBitsService, $location, $interval) {
+    .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', function ($scope, BattleBitsService, $location, $interval, gameUrl) {
         $scope.nextGame = BattleBitsService.nextGame;
+        $scope.gameUrl = gameUrl;
+        $scope.competition = BattleBitsService.competition;
+
+        BattleBitsService.onCompetitionJoined($scope, function () {
+            $scope.competition = BattleBitsService.competition;
+        });
+
         BattleBitsService.onGameScheduled($scope, function () {
             $scope.nextGame = BattleBitsService.nextGame;
             $interval(function () {
                 $scope.timeTillNextGame--;
             }, 1000, $scope.nextGame.start);
-        });
-
-        $scope.competition = BattleBitsService.competition;
-        BattleBitsService.onCompetitionJoined($scope, function () {
-            $scope.competition = BattleBitsService.competition;
         });
 
         BattleBitsService.onGameStarted($scope, function () {
@@ -30,8 +32,8 @@
             BattleBitsService.playGame();
             $scope.enlisted = true;
         };
-    })
-    .controller('GamePlayController', function ($scope, $interval, BattleBitsService, $location) {
+    }])
+    .controller('GamePlayController', ['$scope', '$interval', 'BattleBitsService', '$location', function ($scope, $interval, BattleBitsService, $location) {
         if (BattleBitsService.currentGame == null) {
             $location.path('/');
         }
@@ -77,8 +79,8 @@
                     });
             }
         });
-    })
-    .controller('GameDisplayController', function ($scope, BattleBitsService, $location, $interval) {
+    }])
+    .controller('GameDisplayController', ['$scope', 'BattleBitsService', '$location', '$interval', function ($scope, BattleBitsService, $location, $interval) {
         $scope.competition = BattleBitsService.competition;
         $scope.game = BattleBitsService.currentGame;
 
@@ -94,8 +96,8 @@
         BattleBitsService.onGameEnded($scope, function () {
             $location.path('/');
         });
-    })
-    .service('BattleBitsService', function(competitionId, SignalR, $rootScope, $q) {
+    }])
+    .service('BattleBitsService', ['competitionId', 'SignalR', '$rootScope', '$q', function(competitionId, SignalR, $rootScope, $q) {
         var BatteBitsService = function(competitionId, SignalR) {
             this.competition = null;
             this.nextGame = null;
@@ -207,7 +209,7 @@
             };
         };
         return new BatteBitsService(competitionId, SignalR);
-    })
+    }])
     .filter('binary', function () {
         return function(input, length) {
             length = length || 8;

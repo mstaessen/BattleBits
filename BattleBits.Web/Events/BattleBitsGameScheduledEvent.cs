@@ -16,6 +16,6 @@ namespace BattleBits.Web.Events
         [JsonProperty("duration")]
         public int Duration { get; set; }
 
-        public IList<PlayerDTO> Players { get; set; } = new List<PlayerDTO>();
+        public IList<BattleBitsPlayerDTO> Players { get; set; } = new List<BattleBitsPlayerDTO>();
     }
 }

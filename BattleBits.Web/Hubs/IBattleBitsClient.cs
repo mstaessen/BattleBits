@@ -15,5 +15,7 @@ namespace BattleBits.Web.Hubs
         void GameStarted(BattleBitsGameStartedEvent evt);
 
         void GameEnded(BattleBitsGameEndedEvent evt);
+
+        void PlayerScored(BattleBitsPlayerScoredEvent evt);
     }
 }

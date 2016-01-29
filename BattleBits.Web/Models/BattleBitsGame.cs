@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using BattleBits.Web.Events;
+using BattleBits.Web.Hubs;
 
 namespace BattleBits.Web.Models
 {
@@ -13,6 +15,9 @@ namespace BattleBits.Web.Models
         public byte[] Bytes { get; set; }
 
         public virtual Game Game { get; protected set; }
+
+        [NotMapped]
+        public ISet<BattleBitsPlayer> Players { get; } = new HashSet<BattleBitsPlayer>();
 
         [NotMapped]
         public DateTime StartTime {
@@ -32,6 +37,8 @@ namespace BattleBits.Web.Models
 
         [NotMapped]
         public ISet<Score> Scores => Game.Scores;
+
+
 
 
         /// <summary>

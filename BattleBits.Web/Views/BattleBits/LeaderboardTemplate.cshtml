@@ -9,6 +9,67 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Next Game</h3>
+                </div>
+                <div class="panel-body">
+                    <p ng-hide="nextGame" class="text-center">Waiting for next game...</p>
+                    <div ng-show="nextGame">
+                        <p ng-hide="nextGame.players" class="text-center">Waiting for players...</p>
+                        <table ng-show="nextGame.players" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Company</th>
+                                    <th>High Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="player in nextGame.players">
+                                    <td>{{ player.userName }}</td>
+                                    <td>{{ player.company }}</td>
+                                    <td>{{ player.highScore }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-center" ng-hide="enlisted">
+                        <button class="btn btn-primary" ng-click="playGame()">Join</button>
+                    </p>
+
+                    <p class="text-center">
+                        <img ng-src="https://api.qrserver.com/v1/create-qr-code/?data={{gameUrl}}&size=150x150" alt="Join Game" />
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Leaderboard</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Time</th>
+                            <th>Score</th>
+                            <th>Game</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <div class="col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -28,63 +89,6 @@
                             <tr></tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Leaderboard</h3>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Time</th>
-                                <th>Score</th>
-                                <th>Game</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Next Game</h3>
-                </div>
-                <div class="panel-body">
-                    <p ng-hide="nextGame" class="text-center">Waiting for next game...</p>
-                    <div ng-show="nextGame">
-                        <p ng-hide="nextGame.players" class="text-center">Waiting for players...</p>
-                        <table ng-show="nextGame.players" class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Company</th>
-                                <th>High Score</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="player in nextGame.players">
-                                <td>{{ player.name }}</td>
-                                <td>{{ player.company }}</td>
-                                <td>{{ player.highScore }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p class="text-center" ng-hide="enlisted">
-                        <button class="btn btn-primary" ng-click="playGame()">Join</button>
-                    </p>
                 </div>
             </div>
         </div>

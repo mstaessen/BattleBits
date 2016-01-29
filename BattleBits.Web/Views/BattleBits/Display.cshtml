@@ -1,4 +1,5 @@
-﻿@model BattleBits.Web.ViewModels.BattleBitsViewModel
+﻿@using Microsoft.AspNet.Identity
+@model BattleBits.Web.ViewModels.BattleBitsViewModel
 
 <div ng-app="BattleBits">
     <ng-view />
@@ -28,6 +29,8 @@
                     });
             })
             .constant('competitionId', @Model.CompetitionId)
+            .constant('userId', '@Context.User.Identity.GetUserId()')
+            .constant('gameUrl', '@Html.Encode(@Request.Url)')
             .value('SignalR', $.connection);
     </script>
 }

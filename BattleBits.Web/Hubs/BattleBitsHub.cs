@@ -35,11 +35,36 @@ namespace BattleBits.Web.Hubs
             }
 
             if (game != null) {
-                session.Players[Context.ConnectionId] = true;
-                Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerJoined(new BattleBitsPlayerJoinedEvent {
-                    UserId = Context.User.Identity.GetUserId(),
-                    UserName = Context.User.Identity.GetUserName()
-                });
+                var player = GetPlayer(Context.User.Identity.GetUserId());
+                game.Players.Add(player);
+                Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerJoined(CreatePlayerJoinedEvent(player));
+            }
+        }
+
+        private static BattleBitsPlayerJoinedEvent CreatePlayerJoinedEvent(BattleBitsPlayer player)
+        {
+            return new BattleBitsPlayerJoinedEvent {
+                UserId = player.UserId,
+                UserName = player.UserName,
+                Company = player.Company,
+                HighScore = player.HighScore
+            };
+        }
+
+        private static BattleBitsPlayer GetPlayer(string userId)
+        {
+            using (var context = new CompetitionContext()) {
+                var user  = context.Users.FirstOrDefault(x => x.Id == userId);
+                if (user == null) {
+                    throw new Exception("User not found");
+                }
+                var highScore = context.Scores.Where(x => x.UserId == userId).OrderByDescending(x => x.Value).FirstOrDefault();
+                return new BattleBitsPlayer {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    Company = user.Company,
+                    HighScore = highScore?.Value
+                };
             }
         }
 
@@ -57,7 +82,7 @@ namespace BattleBits.Web.Hubs
             return Groups.Remove(Context.ConnectionId, roomName);
         }
 
-        public int NextNumber(int competitionId, int number, int value)
+        public void NextNumber(int competitionId, int number, int value)
         {
             var session = GetSession(competitionId);
             var game = session.Game;
@@ -65,18 +90,22 @@ namespace BattleBits.Web.Hubs
                 throw new Exception("No current game");
             }
 
-            number++;
+            if (game.Bytes[number] != value) {
+                throw new Exception("Incorrect number");
+            }
+
             var score = game.Scores.FirstOrDefault(x => x.UserId == Context.User.Identity.GetUserId());
             if (score == null) {
                 score = new Score {
                     UserId = Context.User.Identity.GetUserId(),
+                    Value = 0
                 };
                 game.Scores.Add(score);
             }
-            score.Value = number;
+            score.Value++;
             score.Duration = DateTime.UtcNow - game.StartTime;
 
-            return number < game.Bytes.Length ? game.Bytes[number] : 0;
+            Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerScored(CreatePlayerScoredEvent(score));
         }
 
 
@@ -143,13 +172,17 @@ namespace BattleBits.Web.Hubs
                 StartTime = game.StartTime,
                 EndTime = game.EndTime,
                 Duration = Convert.ToInt32(game.Duration.TotalSeconds),
-                Scores = game.Scores.Select(x => new ScoreDTO {
-                    Player = new PlayerDTO {
-                        Name = "TODO Name", // TODO,
-                        Company = "TODO Company", // TODO
-                    },
-                    Score = x.Value,
-                    Time = x.Duration.TotalSeconds
+                Scores = game.Scores.Select(s => {
+                    var player = game.Players.First(u => u.UserId == s.UserId);
+                    return new BattleBitsScoreDTO {
+                        BattleBitsPlayer = new BattleBitsPlayerDTO {
+                            Name = player.UserName,
+                            Company = player.Company,
+                            HighScore = player.HighScore.HasValue ? Math.Max(s.Value, player.HighScore.Value) : s.Value
+                        },
+                        Score = s.Value,
+                        Time = s.Duration.TotalSeconds
+                    };
                 }).ToList()
             };
         }
@@ -159,6 +192,15 @@ namespace BattleBits.Web.Hubs
             return new BattleBitsCompetitionDTO {
                 Id = session.CompetitionId,
                 Name = session.CompetitionName
+            };
+        }
+
+        private static BattleBitsPlayerScoredEvent CreatePlayerScoredEvent(Score score)
+        {
+            return new BattleBitsPlayerScoredEvent {
+                UserId = score.UserId,
+                Time = score.Duration.TotalSeconds,
+                Score = score.Value
             };
         }
 

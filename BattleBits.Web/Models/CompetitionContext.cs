@@ -6,7 +6,7 @@ namespace BattleBits.Web.Models
 
     public class CompetitionContext : IdentityDbContext<ApplicationUser>
     {
-        public CompetitionContext() : base("DefaultConnection", throwIfV1Schema: false)
+        public CompetitionContext() : base("CompetitionContext", throwIfV1Schema: false)
         {
             // For now the model changes too often
             Database.SetInitializer(new CompetitionContextInitializer());
