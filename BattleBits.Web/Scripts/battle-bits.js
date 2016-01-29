@@ -12,9 +12,10 @@
 
         BattleBitsService.onGameScheduled($scope, function () {
             $scope.nextGame = BattleBitsService.nextGame;
+            $scope.timeTillNextGame = $scope.nextGame.delay;
             $interval(function () {
                 $scope.timeTillNextGame--;
-            }, 1000, $scope.nextGame.start);
+            }, 1000, $scope.nextGame.delay);
         });
 
         BattleBitsService.onGameStarted($scope, function () {
