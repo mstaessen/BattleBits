@@ -27,7 +27,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="score in nextGame.scores">
+                                <tr ng-repeat="score in nextGame.scores track by $index">
                                     <td>{{ score.player.userName }}</td>
                                     <td>{{ score.player.company }}</td>
                                     <td class="text-right">{{ score.player.highScore }}</td>

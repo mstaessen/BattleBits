@@ -18,6 +18,7 @@ namespace BattleBits.Web.Games.BattleBits.DTO
         [JsonProperty("numbers")]
         public IList<int> Numbers { get; set; }
 
+        [JsonProperty("scores")]
         public IList<BattleBitsScoreDTO> Scores { get; set; }
     }
 }

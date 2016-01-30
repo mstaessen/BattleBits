@@ -261,11 +261,7 @@ namespace BattleBits.Web.Games.BattleBits
                     .OrderByDescending(x => x.Value)
                     .ThenByDescending(x => x.Time)
                     .Select(s => new BattleBitsScoreDTO {
-                        Player = new BattleBitsPlayerDTO {
-                            UserName = s.Player.UserName,
-                            Company = s.Player.Company,
-                            HighScore = s.Player.HighScore.HasValue ? Math.Max(s.Value, s.Player.HighScore.Value) : s.Value
-                        },
+                        Player = CreatePlayerDTO(s.Player, s.Value),
                         Rank = rank++,
                         Score = s.Value,
                         Time = s.Time.TotalSeconds
@@ -273,16 +269,27 @@ namespace BattleBits.Web.Games.BattleBits
             };
         }
 
+        private static BattleBitsPlayerDTO CreatePlayerDTO(BattleBitsPlayer player, double? newHighScore = null)
+        {
+            if (player == null) {
+                return null;
+            }
+
+            return new BattleBitsPlayerDTO {
+                UserId = player.UserId,
+                UserName = player.UserName,
+                Company = player.Company,
+                HighScore = player.HighScore.HasValue 
+                    ? Math.Max(newHighScore ?? 0, player.HighScore.Value) 
+                    : newHighScore ?? 0
+            };
+        }
+
         private static BattleBitsPlayerScoredEvent CreatePlayerScoredEvent(BattleBitsScore score)
         {
             return new BattleBitsPlayerScoredEvent {
                 Score = new BattleBitsScoreDTO {
-                    Player = new BattleBitsPlayerDTO {
-                        UserId = score.Player.UserId,
-                        UserName = score.Player.UserName,
-                        Company = score.Player.Company,
-                        HighScore = score.Player.HighScore
-                    },
+                    Player = CreatePlayerDTO(score.Player),
                     Time = score.Time.TotalSeconds,
                     Score = score.Value
                 }

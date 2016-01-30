@@ -1,6 +1,10 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
     .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', 'userId', function ($scope, BattleBitsService, $location, $interval, gameUrl, userId) {
+        if ($scope.currentGame) {
+            $location.path('/viewer');
+        }
+        
         $scope.nextGame = BattleBitsService.nextGame;
         $scope.previousGame = BattleBitsService.previousGame;
         $scope.gameUrl = gameUrl;
@@ -23,8 +27,20 @@
             }, 1000, $scope.nextGame.delay);
         });
 
+        $scope.hasJoined = function() {
+            if ($scope.nextGame && $scope.nextGame.scores) {
+                for (var i = 0; i < $scope.nextGame.scores.length; i++) {
+                    if ($scope.nextGame.scores[i].player
+                        && $scope.nextGame.scores[i].player.userId === userId) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+
         BattleBitsService.onGameStarted($scope, function () {
-            if (BattleBitsService.enlisted) {
+            if ($scope.hasJoined()) {
                 $location.path('/play');
             } else {
                 $location.path('/viewer');
@@ -38,18 +54,6 @@
         $scope.playGame = function () {
             BattleBitsService.playGame();
             $scope.enlisted = true;
-        };
-
-        $scope.hasJoined = function() {
-            if ($scope.nextGame && $scope.nextGame.scores) {
-                for (var i = 0; i < $scope.nextGame.scores.length; i++) {
-                    if ($scope.nextGame.highScores[i].player
-                        && $scope.nextGame.highScores[i].player.userId === userId) {
-                        return true;
-                    }
-                }
-            }
-            return false;
         };
     }])
     .controller('GamePlayController', ['$scope', '$interval', 'BattleBitsService', '$location', function ($scope, $interval, BattleBitsService, $location) {
