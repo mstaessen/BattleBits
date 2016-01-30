@@ -1,6 +1,6 @@
-using BattleBits.Web.Events;
+using BattleBits.Web.Games.BattleBits.Events;
 
-namespace BattleBits.Web.Hubs
+namespace BattleBits.Web.Games.BattleBits
 {
     public interface IBattleBitsClient
     {

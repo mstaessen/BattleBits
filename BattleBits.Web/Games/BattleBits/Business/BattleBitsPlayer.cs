@@ -1,4 +1,4 @@
-namespace BattleBits.Web.Hubs
+namespace BattleBits.Web.Games.BattleBits.Business
 {
     public class BattleBitsPlayer
     {

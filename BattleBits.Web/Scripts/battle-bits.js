@@ -1,13 +1,18 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
-    .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', function ($scope, BattleBitsService, $location, $interval, gameUrl) {
+    .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', 'userId', function ($scope, BattleBitsService, $location, $interval, gameUrl, userId) {
         $scope.nextGame = BattleBitsService.nextGame;
         $scope.previousGame = BattleBitsService.previousGame;
         $scope.gameUrl = gameUrl;
         $scope.competition = BattleBitsService.competition;
+        $scope.highScores = BattleBitsService.highScores;
 
         BattleBitsService.onCompetitionJoined($scope, function () {
             $scope.competition = BattleBitsService.competition;
+            $scope.previousGame = BattleBitsService.previousGame;
+            $scope.nextGame = BattleBitsService.nextGame;
+            $scope.currentGame = BattleBitsService.currentGame;
+            $scope.highScores = BattleBitsService.highScores;
         });
 
         BattleBitsService.onGameScheduled($scope, function () {
@@ -33,6 +38,18 @@
         $scope.playGame = function () {
             BattleBitsService.playGame();
             $scope.enlisted = true;
+        };
+
+        $scope.hasJoined = function() {
+            if ($scope.nextGame && $scope.nextGame.scores) {
+                for (var i = 0; i < $scope.nextGame.scores.length; i++) {
+                    if ($scope.nextGame.highScores[i].player
+                        && $scope.nextGame.highScores[i].player.userId === userId) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
     }])
     .controller('GamePlayController', ['$scope', '$interval', 'BattleBitsService', '$location', function ($scope, $interval, BattleBitsService, $location) {
@@ -100,76 +117,85 @@
         });
     }])
     .service('BattleBitsService', ['competitionId', 'SignalR', '$rootScope', '$q', function(competitionId, SignalR, $rootScope, $q) {
-        var BatteBitsService = function(competitionId, SignalR) {
+        var BatteBitsService = function (competitionId, SignalR) {
+
             this.competition = null;
             this.nextGame = null;
             this.currentGame = null;
-            var that = this;
+            this.previousGame = null;
+            this.highScores = [];
 
+            var that = this;
             var hub = SignalR.BattleBitsHub;
             SignalR.hub.start()
                 .done(function() {
                     hub.server.joinCompetition(competitionId)
-                        .done(function(competition) {
+                        .done(function(session) {
                             $rootScope.$apply(function() {
-                                that.competition = competition;
+                                that.competition = session.competition;
+                                that.nextGame = session.nextGame;
+                                that.currentGame = session.currentGame;
+                                that.previousGame = session.previousGame;
+                                that.highScores = session.highScores;
                                 $rootScope.$emit('competition-joined');
                             });
                         }).fail(function(error) {
                             throw error; // TODO Handle error
                         });
-                }).fail(function() {
-                    // TODO Handle error
+                }).fail(function(error) {
+                    throw error; // TODO Handle error
                 });
 
-            hub.client.gameScheduled = function(game) {
+            hub.client.gameScheduled = function(event) {
                 $rootScope.$apply(function() {
-                    that.nextGame = game;
+                    that.nextGame = event.game;
+                    that.nextGame.delay = event.delay;
                     $rootScope.$emit('game-scheduled');
                 });
             };
 
-            hub.client.playerJoined = function (player) {
+            hub.client.playerJoined = function (event) {
                 $rootScope.$apply(function () {
-                    if (that.nextGame != null) {
-                        if (that.nextGame.players == null) {
-                            that.nextGame.players = [];
+                    if (that.nextGame) {
+                        if (!that.nextGame.scores) {
+                            that.nextGame.scores = [];
                         }
-                        that.nextGame.players.push(player);
+                        that.nextGame.scores.push({
+                            player: event.player,
+                            time: 0,
+                            score: 0
+                        });
                         $rootScope.$emit('player-joined');
                     }
                 });
             };
 
-            hub.client.playerLeft = function (player) {
+            hub.client.playerLeft = function (event) {
                 $rootScope.$apply(function () {
                     $rootScope.$emit('player-left');
                 });
             };
 
-            hub.client.gameStarted = function (game) {
+            hub.client.gameStarted = function (event) {
                 $rootScope.$apply(function() {
-                    that.currentGame = game;
+                    that.currentGame = event.game;
                     that.nextGame = null;
                     $rootScope.$emit('game-started');
                 });
             };
 
-            hub.client.gameEnded = function (game) {
+            hub.client.gameEnded = function (event) {
                 $rootScope.$apply(function () {
                     that.currentGame = null;
-                    that.previousGame = game;
+                    that.previousGame = event.game;
                     $rootScope.$emit('game-ended');
                 });
             };
 
             this.playGame = function() {
                 hub.server.joinGame(competitionId)
-                    .done(function() {
-                        that.enlisted = true;
-                    })
-                    .fail(function() {
-                        // TODO Handle Error
+                    .fail(function(error) {
+                        throw error;  // TODO Handle Error
                     });
             };
 

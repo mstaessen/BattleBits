@@ -6,7 +6,7 @@ namespace BattleBits.Web.Models
     {
         protected override void Seed(CompetitionContext context)
         {
-            context.BattleBitCompetitions.Add(new BattleBitsCompetition("BattleBits @ 10 Years VISUG"));
+            context.BattleBitCompetitions.Add(new BattleBitsCompetitionMeta("BattleBits @ 10 Years VISUG"));
             base.Seed(context);
         }
     }

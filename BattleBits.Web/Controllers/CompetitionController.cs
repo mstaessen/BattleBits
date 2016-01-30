@@ -3,26 +3,25 @@ using BattleBits.Web.Models;
 using BattleBits.Web.ViewModels;
 using System.Linq;
 using System;
+using System.Data.Entity;
 
 namespace BattleBits.Web.Controllers
 {
     [Authorize]
     public class CompetitionController : Controller
     {
-
         public ActionResult Index()
         {
             using (var context = new CompetitionContext()) {
-                var gamesPlayed = context.Competitions.GroupBy(entry => entry.Id).ToDictionary(group => group.Key, group => group.Count());
-                var competitions = context.Competitions.ToList().Select(
-                    c => new CompetitionViewModel {
+                var competitions = context.Competitions
+                    .Include(x => x.Games);
+                var model = new HomeViewModel {
+                    Competitions = competitions.Select(c => new CompetitionViewModel {
                         Id = c.Id,
                         GameType = c.GameType,
                         Name = c.Name,
-                        NumberOfGames = gamesPlayed.ContainsKey(c.Id) ? gamesPlayed[c.Id] : 0
-                    }).ToList();
-                var model = new HomeViewModel {
-                    Competitions = competitions
+                        NumberOfGames = c.Games.Count
+                    }).ToList()
                 };
                 return View(model);
             }
@@ -35,18 +34,18 @@ namespace BattleBits.Web.Controllers
                 var model = new CompetitionRankingViewModel {
                     Id = competition.Id,
                     Name = competition.Name,
-                    Scores = context.Scores.Where(entry => entry.Game.Competition.Id == competition.Id).OrderByDescending(e => e.Value).ThenBy(e => e.Duration).Take(50).ToList()
+                    Scores = context.Scores.Where(entry => entry.Game.Competition.Id == competition.Id).OrderByDescending(e => e.Value).ThenBy(e => e.Time).Take(50).ToList()
                 };
                 // TODO remove when actual records are added
                 model.Scores.Add(new Score {
                     UserId = "mstaessen",
                     Value = 29,
-                    Duration = TimeSpan.FromSeconds(134)
+                    Time = TimeSpan.FromSeconds(134)
                 });
                 model.Scores.Add(new Score {
                     UserId = "Samwise",
                     Value = 23,
-                    Duration = TimeSpan.FromSeconds(100)
+                    Time = TimeSpan.FromSeconds(100)
                 });
 
                 return View(model);

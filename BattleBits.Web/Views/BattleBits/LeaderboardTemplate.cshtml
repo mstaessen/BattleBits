@@ -17,8 +17,8 @@
                 <div class="panel-body">
                     <p ng-hide="nextGame" class="text-center">Waiting for next game...</p>
                     <div ng-show="nextGame">
-                        <p ng-hide="nextGame.players" class="text-center">Waiting for players...</p>
-                        <table ng-show="nextGame.players" class="table table-striped">
+                        <p ng-hide="nextGame.scores" class="text-center">Waiting for players...</p>
+                        <table ng-show="nextGame.scores" class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -27,15 +27,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="player in nextGame.players">
-                                    <td>{{ player.userName }}</td>
-                                    <td>{{ player.company }}</td>
-                                    <td>{{ player.highScore }}</td>
+                                <tr ng-repeat="score in nextGame.scores">
+                                    <td>{{ score.player.userName }}</td>
+                                    <td>{{ score.player.company }}</td>
+                                    <td class="text-right">{{ score.player.highScore }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <p class="text-center" ng-hide="enlisted">
+                    <p class="text-center" ng-hide="hasJoined()">
                         <button class="btn btn-primary" ng-click="playGame()">Join</button>
                     </p>
 
@@ -56,6 +56,7 @@
                         <tr>
                             <th>Rank</th>
                             <th>Name</th>
+                            <th>Company</th>
                             <th>Time</th>
                             <th>Score</th>
                         </tr>
@@ -64,8 +65,9 @@
                         <tr ng-repeat="score in previousGame.scores | orderBy:'+rank'">
                             <td>{{ score.rank }}</td>
                             <td>{{ score.player.userName }}</td>
-                            <td>{{ score.time }}s</td>
-                            <td>{{ score.score }}</td>
+                            <td>{{ score.player.company }}</td>
+                            <td class="text-right">{{ score.time | number:2 }}s</td>
+                            <td class="text-right">{{ score.score }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -83,13 +85,19 @@
                             <tr>
                                 <th>Rank</th>
                                 <th>Name</th>
+                                <th>Company</th>
                                 <th>Time</th>
                                 <th>Score</th>
-                                <th>Game</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr></tr>
+                            <tr ng-repeat="score in highScores">
+                                <td>{{ score.rank }}</td>
+                                <td>{{ score.player.userName }}</td>
+                                <td>{{ score.player.company }}</td>
+                                <td class="text-right">{{ score.time | number:2 }}s</td>
+                                <td class="text-right">{{ score.score }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

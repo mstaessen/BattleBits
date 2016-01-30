@@ -16,7 +16,7 @@ namespace BattleBits.Web.Models
 
         public DbSet<Score> Scores { get; set; }
 
-        public DbSet<BattleBitsCompetition> BattleBitCompetitions { get; set; }
+        public DbSet<BattleBitsCompetitionMeta> BattleBitCompetitions { get; set; }
         
 
         public static CompetitionContext Create()

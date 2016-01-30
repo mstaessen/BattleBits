@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BattleBits.Web.Models
 {
-    public class BattleBitsCompetition
+    public class BattleBitsCompetitionMeta
     {
         [Key]
         public int Id { get; protected set; }
 
-        public int NumberCount { get; protected set; }
+        public byte NumberCount { get; protected set; }
 
         public TimeSpan Duration { get; protected set; }
 
@@ -17,9 +17,9 @@ namespace BattleBits.Web.Models
         /// <summary>
         /// EF constructor
         /// </summary>
-        protected BattleBitsCompetition() {}
+        protected BattleBitsCompetitionMeta() {}
 
-        public BattleBitsCompetition(string name, int numberCount = 24, int seconds = 45)
+        public BattleBitsCompetitionMeta(string name, byte numberCount = 24, int seconds = 45)
         {
             Competition = new Competition {
                 GameType = GameType.BattleBits,

@@ -35,7 +35,7 @@
                                     currentPlace++;
                                     if (lastEntry == null
                                         || lastEntry.Score != gameEntry.Score
-                                        || lastEntry.Duration != gameEntry.Duration)
+                                        || lastEntry.Time != gameEntry.Time)
                                     {
                                         lastEntry = gameEntry;
                                         @currentPlace // only show when different score than previous player in ranking
@@ -45,7 +45,7 @@
                                 &nbsp;
                             </td>
                             <td>@gameEntry.User.Name</td>
-                            <td>@gameEntry.Duration</td>
+                            <td>@gameEntry.Time</td>
                             <td>@gameEntry.Score</td>
                         </tr>
                     }

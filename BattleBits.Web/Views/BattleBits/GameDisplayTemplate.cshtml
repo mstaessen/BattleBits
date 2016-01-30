@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3" ng-repeat="number in game.numbers">
+        <div class="col-md-3" ng-repeat="number in game.numbers track by $index">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <p class="text-center">{{ number | hex }}</p>

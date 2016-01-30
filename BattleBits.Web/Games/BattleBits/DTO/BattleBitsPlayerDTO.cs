@@ -1,8 +1,8 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace BattleBits.Web.Events
+namespace BattleBits.Web.Games.BattleBits.DTO
 {
-    public class BattleBitsPlayerJoinedEvent
+    public class BattleBitsPlayerDTO
     {
         [JsonProperty("userId")]
         public string UserId { get; set; }

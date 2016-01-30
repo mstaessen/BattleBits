@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using BattleBits.Web.DTO;
 using Newtonsoft.Json;
 
-namespace BattleBits.Web.Events
+namespace BattleBits.Web.Games.BattleBits.DTO
 {
-    public class BattleBitsGameEndedEvent
+    public class BattleBitsGameDTO
     {
         [JsonProperty("start")]
         public DateTime StartTime { get; set; }
@@ -16,7 +15,9 @@ namespace BattleBits.Web.Events
         [JsonProperty("duration")]
         public int Duration { get; set; }
 
-        [JsonProperty("scores")]
+        [JsonProperty("numbers")]
+        public IList<int> Numbers { get; set; }
+
         public IList<BattleBitsScoreDTO> Scores { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 
-namespace BattleBits.Web.Events
+namespace BattleBits.Web.Games.BattleBits.DTO
 {
-    public class BattleBitsPlayerLeftEvent
+    public class BattleBitsCompetitionDTO
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }

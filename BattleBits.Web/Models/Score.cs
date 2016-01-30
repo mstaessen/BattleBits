@@ -8,7 +8,7 @@ namespace BattleBits.Web.Models
         [Key]
         public int Id { get; set; }
 
-        public TimeSpan Duration { get; set; }
+        public TimeSpan Time { get; set; }
 
         public double Value { get; set; }
 

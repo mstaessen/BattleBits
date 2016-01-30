@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BattleBits.Web.DTO
+namespace BattleBits.Web.Games.BattleBits.DTO
 {
     public class BattleBitsScoreDTO
     {
@@ -14,6 +14,6 @@ namespace BattleBits.Web.DTO
         public double Score { get; set; }
 
         [JsonProperty("player")]
-        public BattleBitsPlayerDTO BattleBitsPlayer { get; set; }
+        public BattleBitsPlayerDTO Player { get; set; }
     }
 }
