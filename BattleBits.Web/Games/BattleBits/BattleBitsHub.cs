@@ -44,6 +44,20 @@ namespace BattleBits.Web.Games.BattleBits
             }
         }
 
+        private static BattleBitsPlayerLeftEvent CreatePlayerLeftEvent(BattleBitsPlayer player)
+        {
+            return new BattleBitsPlayerLeftEvent
+            {
+                Player = new BattleBitsPlayerDTO
+                {
+                    UserId = player.UserId,
+                    UserName = player.UserName,
+                    Company = player.Company,
+                    HighScore = player.HighScore
+                }
+            };
+        }
+
         private static BattleBitsPlayerJoinedEvent CreatePlayerJoinedEvent(BattleBitsPlayer player)
         {
             return new BattleBitsPlayerJoinedEvent {
@@ -118,6 +132,8 @@ namespace BattleBits.Web.Games.BattleBits
                 {
                     var game = session.CurrentOrNextGame;
                     if (game == null) continue;
+                    // notify clients player left
+                    Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Competition.Id)).PlayerLeft(CreatePlayerLeftEvent(player));
                     var scores = game.Scores.Where(s => s.Player.UserId == player.UserId && s.Value == 0).ToList();
                     if (!scores.Any()) continue;
                     foreach (var score in scores)
@@ -128,7 +144,7 @@ namespace BattleBits.Web.Games.BattleBits
                     {
                         // Cancel scheduled game when last player disconnects
                         session.CancelGame();
-                        // TODO: Push cancelling to all clients
+                        // TODO: Push cancelling to all clients or handle clientside on playerleft?
                     }
                 }
             }

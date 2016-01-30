@@ -52,8 +52,12 @@
         });
 
         $scope.playGame = function () {
-            BattleBitsService.playGame();
-            $scope.enlisted = true;
+            if ($scope.currentGame != null) {
+                $location.path('/viewer');
+            } else {
+                BattleBitsService.playGame();
+                $scope.enlisted = true;
+            }
         };
     }])
     .controller('GamePlayController', ['$scope', '$interval', 'BattleBitsService', '$location', function ($scope, $interval, BattleBitsService, $location) {
@@ -176,6 +180,12 @@
 
             hub.client.playerLeft = function (event) {
                 $rootScope.$apply(function () {
+                    if (that.nextGame
+                        && that.nextGame.scores) {
+                        that.nextGame.scores = $.grep(that.nextGame.scores, function (s) {
+                            return s.player.userId != event.player.userId || s.score > 0;
+                        });
+                    }
                     $rootScope.$emit('player-left');
                 });
             };
