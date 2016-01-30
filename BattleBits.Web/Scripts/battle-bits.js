@@ -2,7 +2,7 @@
     .module('BattleBits', ['ngRoute'])
     .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', 'userId', function ($scope, BattleBitsService, $location, $interval, gameUrl, userId) {
         if ($scope.currentGame) {
-            $location.path('/viewer');
+            return $location.path('/viewer');
         }
         
         $scope.nextGame = BattleBitsService.nextGame;
@@ -41,10 +41,9 @@
 
         BattleBitsService.onGameStarted($scope, function () {
             if ($scope.hasJoined()) {
-                $location.path('/play');
-            } else {
-                $location.path('/viewer');
+                return $location.path('/play');
             }
+            return $location.path('/viewer');
         });
 
         BattleBitsService.onGameEnded($scope, function () {
@@ -53,16 +52,15 @@
 
         $scope.playGame = function () {
             if ($scope.currentGame != null) {
-                $location.path('/viewer');
-            } else {
-                BattleBitsService.playGame();
-                $scope.enlisted = true;
+                return $location.path('/viewer');
             }
+            BattleBitsService.playGame();
+            $scope.enlisted = true;
         };
     }])
     .controller('GamePlayController', ['$scope', '$interval', 'BattleBitsService', '$location', function ($scope, $interval, BattleBitsService, $location) {
         if (BattleBitsService.currentGame == null) {
-            $location.path('/');
+            return $location.path('/');
         }
         var currentGame = BattleBitsService.currentGame;
 
@@ -86,7 +84,7 @@
         }, 1000, currentGame.duration);
 
         BattleBitsService.onGameEnded($scope, function () {
-            $location.path('/score');
+            return $location.path('/score');
         });
 
         var numberWatcher = $scope.$watch('guess', function(newValue) {
@@ -112,7 +110,7 @@
         $scope.game = BattleBitsService.currentGame;
 
         if ($scope.game == null) {
-            $location.path('/');
+            return $location.path('/');
         }
 
         $scope.timeLeft = $scope.game.duration;
@@ -121,7 +119,7 @@
         }, 1000, $scope.game.duration);
 
         BattleBitsService.onGameEnded($scope, function () {
-            $location.path('/');
+            return $location.path('/');
         });
     }])
     .service('BattleBitsService', ['competitionId', 'SignalR', '$rootScope', '$q', function(competitionId, SignalR, $rootScope, $q) {
