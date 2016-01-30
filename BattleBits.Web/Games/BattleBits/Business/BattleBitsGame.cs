@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BattleBits.Web.Games.BattleBits.Business
 {
@@ -26,6 +27,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public void AddPlayer(BattleBitsPlayer player)
         {
+            if (Scores.Any(s => s.Player.UserId == player.UserId)) return;
             Scores.Add(new BattleBitsScore {
                 Player = player,
                 Value = 0,

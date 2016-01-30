@@ -21,6 +21,15 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public BattleBitsGame CurrentGame { get; private set; }
 
+        public BattleBitsGame CurrentOrNextGame
+        {
+            get {
+                if (NextGame != null) return NextGame;
+                if (CurrentGame != null) return CurrentGame;
+                return null;
+            }
+        }
+
         public BattleBitsGame PreviousGame { get; internal set; }
 
         public IList<BattleBitsScore> HighScores { get; set; }
@@ -92,7 +101,9 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public bool CancelGame()
         {
-            if (CurrentGame != null && CurrentGame.StartTime > DateTime.UtcNow) {
+            if (CurrentGame != null 
+                && CurrentGame.StartTime > DateTime.UtcNow
+                && CurrentGame.Scores.Any()) {
                 // Game already started
                 return false;
             }
@@ -108,7 +119,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
                 gameEndTimer.Dispose();
                 gameEndTimer = null;
             }
-
+            NextGame = CurrentGame = null;
             return true;
         }
     }

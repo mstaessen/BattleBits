@@ -34,9 +34,12 @@ namespace BattleBits.Web.Games.BattleBits
             var player = GetPlayer(Context.User.Identity.GetUserId());
             game.AddPlayer(player);
 
-            if (gameCreated) {
+            if (gameCreated)
+            {
                 Clients.Group(FormatCompetitionGroupName(competitionId)).GameScheduled(CreateGameScheduledEvent(game));
-            } else {
+            }
+            else
+            {
                 Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerJoined(CreatePlayerJoinedEvent(player));
             }
         }
@@ -108,8 +111,27 @@ namespace BattleBits.Web.Games.BattleBits
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            // TODO: Stop tracking session if last user disconnects
-            // TODO: Cancel scheduled game when last player disconnects
+            var player = GetPlayer(Context.User.Identity.GetUserId());
+            if (player != null)
+            {
+                foreach (var session in ActiveSessions.Values)
+                {
+                    var game = session.CurrentOrNextGame;
+                    if (game == null) continue;
+                    var scores = game.Scores.Where(s => s.Player.UserId == player.UserId && s.Value == 0).ToList();
+                    if (!scores.Any()) continue;
+                    foreach (var score in scores)
+                    {
+                        game.Scores.Remove(score);
+                    }
+                    if (!game.Scores.Any())
+                    {
+                        // Cancel scheduled game when last player disconnects
+                        session.CancelGame();
+                        // TODO: Push cancelling to all clients
+                    }
+                }
+            }
             return base.OnDisconnected(stopCalled);
         }
 
@@ -189,8 +211,9 @@ namespace BattleBits.Web.Games.BattleBits
             if (session == null) {
                 throw new ArgumentNullException(nameof(session));
             }
-            if (session.CurrentGame != null) {
-                game = session.CurrentGame;
+            if(session.CurrentOrNextGame != null)
+            {
+                game = session.CurrentOrNextGame;
                 return false;
             }
 
