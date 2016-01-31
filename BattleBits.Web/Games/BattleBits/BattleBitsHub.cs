@@ -110,7 +110,7 @@ namespace BattleBits.Web.Games.BattleBits
             if (score == null) {
                 throw new Exception("Player not found.");
             }
-            if(game.EndTime < DateTime.UtcNow) // unable to answer when time passed
+            if(game.EndTime >= DateTime.UtcNow) // answer only accepted in time
             {
                 score.Value++;
                 score.Time = DateTime.UtcNow - game.StartTime;
