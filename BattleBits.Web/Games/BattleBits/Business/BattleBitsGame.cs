@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BattleBits.Web.Games.BattleBits.Business
 {
@@ -18,7 +17,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public TimeSpan Duration => EndTime - StartTime;
 
-        public ISet<BattleBitsScore> Scores { get; set; } = new HashSet<BattleBitsScore>();
+        public IDictionary<string, BattleBitsScore> Scores { get; set; } = new Dictionary<string, BattleBitsScore>();
 
         public BattleBitsGame(byte size)
         {
@@ -27,8 +26,9 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public void AddPlayer(BattleBitsPlayer player)
         {
-            if (Scores.Any(s => s.Player.UserId == player.UserId)) return;
-            Scores.Add(new BattleBitsScore {
+            if (player == null || Scores.ContainsKey(player.UserId))
+                return;
+            Scores.Add(player.UserId, new BattleBitsScore {
                 Player = player,
                 Value = 0,
                 Time = TimeSpan.Zero

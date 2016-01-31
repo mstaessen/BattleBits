@@ -21,12 +21,12 @@
 
         $scope.competition = BattleBitsService.competition;
         $scope.gameUrl = gameUrl;
-        $scope.previousGame = BattleBitsService.previousGame;
+        $scope.previousGameScores = BattleBitsService.previousGameScores;
         $scope.highScores = BattleBitsService.highScores;
 
         BattleBitsService.onCompetitionJoined($scope, function () {
             $scope.competition = BattleBitsService.competition;
-            $scope.previousGame = BattleBitsService.previousGame;
+            $scope.previousGameScores = BattleBitsService.previousGameScores;
             $scope.nextGame = BattleBitsService.nextGame;
             $scope.currentGame = BattleBitsService.currentGame;
             $scope.highScores = BattleBitsService.highScores;
@@ -37,16 +37,10 @@
             setNextGameDelay($scope.nextGame);
         });
 
-        $scope.hasJoined = function() {
-            if ($scope.nextGame && $scope.nextGame.scores) {
-                for (var i = 0; i < $scope.nextGame.scores.length; i++) {
-                    if ($scope.nextGame.scores[i].player
-                        && $scope.nextGame.scores[i].player.userId === userId) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+        $scope.hasJoined = function () {
+            return $scope.nextGame
+                && $scope.nextGame.scores
+                && $scope.nextGame.scores[userId];
         };
 
         BattleBitsService.onGameStarted($scope, function () {
@@ -57,7 +51,7 @@
         });
 
         BattleBitsService.onGameEnded($scope, function () {
-            $scope.previousGame = BattleBitsService.previousGame;
+            $scope.previousGameScores = BattleBitsService.previousGameScores;
             $scope.highScores = BattleBitsService.highScores;
         });
 
@@ -135,7 +129,7 @@
             this.competition = null;
             this.nextGame = null;
             this.currentGame = null;
-            this.previousGame = null;
+            this.previousGameScores = null;
             this.highScores = [];
 
             var that = this;
@@ -154,11 +148,11 @@
                         if (!that.nextGame.scores) {
                             that.nextGame.scores = [];
                         }
-                        that.nextGame.scores.push({
+                        that.nextGame.scores[event.player.userId] = {
                             player: event.player,
                             time: 0,
                             score: 0
-                        });
+                        };
                         $rootScope.$emit('player-joined');
                     }
                 });
@@ -167,10 +161,9 @@
             hub.client.playerLeft = function(event) {
                 $rootScope.$apply(function() {
                     if (that.nextGame
-                        && that.nextGame.scores) {
-                        that.nextGame.scores = $.grep(that.nextGame.scores, function(s) {
-                            return s.player.userId != event.player.userId || s.score > 0;
-                        });
+                        && that.nextGame.scores
+                        && that.nextGame.scores[event.userId]) {
+                            delete that.nextGame.scores[event.userId];
                     }
                     $rootScope.$emit('player-left');
                 });
@@ -187,11 +180,21 @@
             hub.client.gameEnded = function(event) {
                 $rootScope.$apply(function() {
                     that.currentGame = null;
-                    that.previousGame = event.game;
+                    that.previousGameScores = event.previousGameScores;
                     that.highScores = event.highScores;
                     $rootScope.$emit('game-ended');
                 });
             };
+
+            hub.client.playerScored = function (event) {
+                $rootScope.$apply(function () {
+                    if (that.currentGame
+                            && that.currentGame.scores) {
+                        that.currentGame.scores[event.score.player.userId] = event.score;
+                    }
+                    $rootScope.$emit('player-scored');
+                });
+            }
 
             this.playGame = function() {
                 hub.server.joinGame(competitionId)
@@ -236,6 +239,10 @@
                 var unsubscribe = $rootScope.$on('game-ended', callback);
                 scope.$on('$destroy', unsubscribe);
             };
+            this.onPlayerScored = function (scope, callback) {
+                var unsubscribe = $rootScope.$on('player-scored', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
 
             // This MUST come at the end, or client callbacks wont be registered!
             SignalR.hub.start()
@@ -246,7 +253,7 @@
                                 that.competition = session.competition;
                                 that.nextGame = session.nextGame;
                                 that.currentGame = session.currentGame;
-                                that.previousGame = session.previousGame;
+                                that.previousGameScores = session.previousGameScores;
                                 that.highScores = session.highScores;
                                 $rootScope.$emit('competition-joined');
                             });

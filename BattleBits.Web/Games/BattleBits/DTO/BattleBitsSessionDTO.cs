@@ -17,7 +17,7 @@ namespace BattleBits.Web.Games.BattleBits.DTO
         [JsonProperty("currentGame")]
         public BattleBitsGameDTO CurrentGame { get; set; }
 
-        [JsonProperty("previousGame")]
-        public BattleBitsGameDTO PreviousGame { get; set; }
+        [JsonProperty("previousGameScores")]
+        public IList<BattleBitsScoreDTO> PreviousGameScores { get; set; }
     }
 }

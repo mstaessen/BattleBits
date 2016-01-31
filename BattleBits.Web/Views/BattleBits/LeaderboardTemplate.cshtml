@@ -62,7 +62,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="score in previousGame.scores | orderBy:'+rank'">
+                        <tr ng-repeat="score in previousGameScores | orderBy:'+rank'">
                             <td>{{ score.rank }}</td>
                             <td>{{ score.player.userName }}</td>
                             <td>{{ score.player.company }}</td>

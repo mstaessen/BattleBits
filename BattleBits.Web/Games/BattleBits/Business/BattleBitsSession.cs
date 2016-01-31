@@ -22,7 +22,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public BattleBitsGame CurrentOrNextGame => NextGame ?? CurrentGame;
 
-        public BattleBitsGame PreviousGame { get; internal set; }
+        public IList<BattleBitsScore> PreviousGameScores { get; internal set; }
 
         public IList<BattleBitsScore> HighScores { get; set; }
 
@@ -54,10 +54,12 @@ namespace BattleBits.Web.Games.BattleBits.Business
                         context.SaveChanges();
                     }
                 }
-                onGameEnd(game, UpdateHighScores(game.Scores));
+                onGameEnd(game, UpdateHighScores(game.Scores.Values));
                 gameEndTimer.Dispose();
                 gameEndTimer = null;
-                PreviousGame = game;
+                PreviousGameScores = game.Scores.Values
+                    .OrderByDescending(s => s.Value)
+                    .ThenBy(s => s.Time).ToList();
                 CurrentGame = null;
             }, null, game.EndTime - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
 
@@ -71,7 +73,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
                 StartTime = game.StartTime,
                 EndTime = game.EndTime
             };
-            foreach (var score in game.Scores) {
+            foreach (var score in game.Scores.Values) {
                 model.Scores.Add(new Score {
                     Value = score.Value,
                     Time = score.Time,
@@ -95,7 +97,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
         {
             if (CurrentGame != null 
                 && CurrentGame.StartTime <= DateTime.UtcNow
-                && CurrentGame.Scores.Any(x => x.Value > 0)) {
+                && CurrentGame.Scores.Values.Any(x => x.Value > 0)) {
                 // Game already started
                 return false;
             }

@@ -44,17 +44,11 @@ namespace BattleBits.Web.Games.BattleBits
             }
         }
 
-        private static BattleBitsPlayerLeftEvent CreatePlayerLeftEvent(BattleBitsPlayer player)
+        private static BattleBitsPlayerLeftEvent CreatePlayerLeftEvent(string playerId)
         {
             return new BattleBitsPlayerLeftEvent
             {
-                Player = new BattleBitsPlayerDTO
-                {
-                    UserId = player.UserId,
-                    UserName = player.UserName,
-                    Company = player.Company,
-                    HighScore = player.HighScore
-                }
+                UserId = playerId
             };
         }
 
@@ -112,34 +106,35 @@ namespace BattleBits.Web.Games.BattleBits
                 throw new Exception("Incorrect number");
             }
 
-            var score = game.Scores.FirstOrDefault(x => x.Player.UserId == Context.User.Identity.GetUserId());
+            var score = game.Scores[Context.User.Identity.GetUserId()];
             if (score == null) {
                 throw new Exception("Player not found.");
             }
-            score.Value++;
-            score.Time = DateTime.UtcNow - game.StartTime;
+            if(game.EndTime < DateTime.UtcNow) // unable to answer when time passed
+            {
+                score.Value++;
+                score.Time = DateTime.UtcNow - game.StartTime;
 
-            Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerScored(CreatePlayerScoredEvent(score));
+                Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerScored(CreatePlayerScoredEvent(score));
+            }
         }
 
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            var player = GetPlayer(Context.User.Identity.GetUserId());
-            if (player != null)
+            var playerId = Context.User.Identity.GetUserId();
+            if (playerId != null)
             {
                 foreach (var session in ActiveSessions.Values)
                 {
                     var game = session.CurrentOrNextGame;
-                    if (game == null) continue;
+                    if (game == null) continue; // no game in progress
+                    if (!game.Scores.ContainsKey(playerId)) continue; // player that's leaving has no score
                     // notify clients player left
-                    Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Competition.Id)).PlayerLeft(CreatePlayerLeftEvent(player));
-                    var scores = game.Scores.Where(s => s.Player.UserId == player.UserId && s.Value == 0).ToList();
-                    if (!scores.Any()) continue;
-                    foreach (var score in scores)
-                    {
-                        game.Scores.Remove(score);
-                    }
+                    Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Competition.Id)).PlayerLeft(CreatePlayerLeftEvent(playerId));
+                    var score = game.Scores[playerId];
+                    if (score.Value > 0) continue;
+                    game.Scores.Remove(playerId);
                     if (!game.Scores.Any())
                     {
                         // Cancel scheduled game when last player disconnects
@@ -188,38 +183,34 @@ namespace BattleBits.Web.Games.BattleBits
                     .ToList();
                 return new BattleBitsSession {
                     CompetitionMeta = competition,
-                    PreviousGame = GetPreviousGame(competition, context),
+                    PreviousGameScores = GetPreviousGameScores(competition, context),
                     HighScores = highScores
                 };
             }
         }
 
-        private static BattleBitsGame GetPreviousGame(BattleBitsCompetitionMeta competitionMeta, CompetitionContext context)
+        private static IList<BattleBitsScore> GetPreviousGameScores(BattleBitsCompetitionMeta competitionMeta, CompetitionContext context)
         {
-            var scores = context.Scores
+            var startTime = context.Scores
                 .Where(x => x.Game.Competition.Id == competitionMeta.Id)
-                .Join(context.Users, s => s.UserId, u => u.Id, (s, u) => new {
-                    GameStart = s.Game.StartTime,
-                    Score = new BattleBitsScore {
+                .Max(s => s.Game.StartTime);
+            return context.Scores
+                .Where(x => x.Game.Competition.Id == competitionMeta.Id
+                    && x.Game.StartTime == startTime)
+                .Join(context.Users, s => s.UserId, u => u.Id, (s, u) =>
+                    new BattleBitsScore
+                    {
                         Value = s.Value,
                         Time = s.Time,
-                        Player = new BattleBitsPlayer {
+                        Player = new BattleBitsPlayer
+                        {
                             UserId = u.Id,
                             UserName = u.UserName,
                             Company = u.Company,
                         }
-                    }
-                })
-                .OrderByDescending(x => x.GameStart)
-                .GroupBy(x => x.GameStart)
-                .FirstOrDefault();
-            var game = new BattleBitsGame(competitionMeta.NumberCount);
-            if (scores != null) {
-                foreach (var score in scores.Select(x => x.Score)) {
-                    game.Scores.Add(score);
-                }
-            }
-            return game;
+                    }).OrderByDescending(s => s.Value)
+                    .ThenBy(s => s.Time)
+           .ToList();
         }
 
         private bool GetOrCreateGame(BattleBitsSession session, out BattleBitsGame game)
@@ -238,7 +229,7 @@ namespace BattleBits.Web.Games.BattleBits
                 Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Id)).GameStarted(evt);
             };
             Action<BattleBitsGame, IList<BattleBitsScore>> onGameEnd = (g, scores) => {
-                var evt = CreateGameEndedEvent(g, scores);
+                var evt = CreateGameEndedEvent(g.Scores.Values, scores);
                 Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Id)).GameEnded(evt);
             };
             game = session.CreateGame(onGameStart, onGameEnd);
@@ -252,11 +243,11 @@ namespace BattleBits.Web.Games.BattleBits
             };
         }
 
-        private static BattleBitsGameEndedEvent CreateGameEndedEvent(BattleBitsGame game, IList<BattleBitsScore> scores)
+        private static BattleBitsGameEndedEvent CreateGameEndedEvent(IEnumerable<BattleBitsScore> previousGameScores, IEnumerable<BattleBitsScore> allScores)
         {
             return new BattleBitsGameEndedEvent {
-                Game = CreateGameDTO(game),
-                HighScores = scores.Select(CreateScoreDTO).ToList()
+                PreviousGameScores = previousGameScores.Select(CreateScoreDTO).ToList(),
+                HighScores = allScores.Select(CreateScoreDTO).ToList()
             };
         }
 
@@ -272,24 +263,13 @@ namespace BattleBits.Web.Games.BattleBits
 
         private static BattleBitsSessionDTO CreateSessionDTO(BattleBitsSession session)
         {
-            var rank = 1;
             return new BattleBitsSessionDTO {
                 Competition = new BattleBitsCompetitionDTO {
                     Id = session.CompetitionMeta.Id,
                     Name = session.CompetitionMeta.Competition.Name,
                 },
-                HighScores = session.HighScores.Select(x => new BattleBitsScoreDTO {
-                    Rank = rank++,
-                    Score = x.Value,
-                    Time = x.Time.TotalSeconds,
-                    Player = new BattleBitsPlayerDTO {
-                        UserId = x.Player.UserId,
-                        UserName = x.Player.UserName,
-                        Company = x.Player.Company,
-                        HighScore = x.Player.HighScore
-                    }
-                }).ToList(),
-                PreviousGame = CreateGameDTO(session.PreviousGame),
+                HighScores = session.HighScores.Select(CreateScoreDTO).ToList(),
+                PreviousGameScores = session.PreviousGameScores.Select(CreateScoreDTO).ToList(),
                 CurrentGame = CreateGameDTO(session.CurrentGame),
                 NextGame = CreateGameDTO(session.NextGame)
             };
@@ -307,15 +287,15 @@ namespace BattleBits.Web.Games.BattleBits
                 EndTime = game.EndTime,
                 Duration = Convert.ToInt32(game.Duration.TotalSeconds),
                 Numbers = game.Bytes.Select(Convert.ToInt32).ToList(),
-                Scores = game.Scores
-                    .OrderByDescending(x => x.Value)
-                    .ThenBy(x => x.Time)
-                    .Select(s => new BattleBitsScoreDTO {
-                        Player = CreatePlayerDTO(s.Player, s.Value),
-                        Rank = rank++,
-                        Score = s.Value,
-                        Time = s.Time.TotalSeconds
-                    }).ToList()
+                Scores = game.Scores.Values
+                    .Select(s =>
+                        new BattleBitsScoreDTO
+                        {
+                            Player = CreatePlayerDTO(s.Player, s.Value),
+                            Rank = rank++,
+                            Score = s.Value,
+                            Time = s.Time.TotalSeconds
+                        }).ToDictionary(s => s.Player.UserId)
             };
         }
 

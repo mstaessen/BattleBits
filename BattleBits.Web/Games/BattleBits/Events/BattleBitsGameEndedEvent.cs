@@ -6,8 +6,8 @@ namespace BattleBits.Web.Games.BattleBits.Events
 {
     public class BattleBitsGameEndedEvent
     {
-        [JsonProperty("game")]
-        public BattleBitsGameDTO Game { get; set; }
+        [JsonProperty("previousGameScores")]
+        public IList<BattleBitsScoreDTO> PreviousGameScores { get; set; }
 
         [JsonProperty("highScores")]
         public IList<BattleBitsScoreDTO> HighScores { get; set; }
