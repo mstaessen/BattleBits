@@ -1,15 +1,28 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
     .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', 'userId', function ($scope, BattleBitsService, $location, $interval, gameUrl, userId) {
-        $scope.nextGame = BattleBitsService.nextGame;
-        $scope.previousGame = BattleBitsService.previousGame;
-        $scope.gameUrl = gameUrl;
-        $scope.competition = BattleBitsService.competition;
-        $scope.highScores = BattleBitsService.highScores;
+        function setNextGameDelay(game) {
+            var delay = Math.round((new Date(game.start) - new Date()) / 1000);
+            $scope.timeTillNextGame = delay;
+            $interval(function () {
+                $scope.timeTillNextGame--;
+            }, 1000, delay);
+        }
 
+        $scope.currentGame = BattleBitsService.currentGame;
         if ($scope.currentGame) {
             return $location.path('/viewer');
         }
+
+        $scope.nextGame = BattleBitsService.nextGame;
+        if ($scope.nextGame) {
+            setNextGameDelay($scope.nextGame);
+        }
+
+        $scope.competition = BattleBitsService.competition;
+        $scope.gameUrl = gameUrl;
+        $scope.previousGame = BattleBitsService.previousGame;
+        $scope.highScores = BattleBitsService.highScores;
 
         BattleBitsService.onCompetitionJoined($scope, function () {
             $scope.competition = BattleBitsService.competition;
@@ -21,10 +34,7 @@
 
         BattleBitsService.onGameScheduled($scope, function () {
             $scope.nextGame = BattleBitsService.nextGame;
-            $scope.timeTillNextGame = $scope.nextGame.delay;
-            $interval(function () {
-                $scope.timeTillNextGame--;
-            }, 1000, $scope.nextGame.delay);
+            setNextGameDelay($scope.nextGame);
         });
 
         $scope.hasJoined = function() {

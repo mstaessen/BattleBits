@@ -183,7 +183,7 @@ namespace BattleBits.Web.Games.BattleBits
                         Time = s.Time
                     })
                     .OrderByDescending(x => x.Value)
-                    .ThenByDescending(x => x.Time)
+                    .ThenBy(x => x.Time)
                     .Take(BattleBitsSession.ScoreCount)
                     .ToList();
                 return new BattleBitsSession {
@@ -309,7 +309,7 @@ namespace BattleBits.Web.Games.BattleBits
                 Numbers = game.Bytes.Select(Convert.ToInt32).ToList(),
                 Scores = game.Scores
                     .OrderByDescending(x => x.Value)
-                    .ThenByDescending(x => x.Time)
+                    .ThenBy(x => x.Time)
                     .Select(s => new BattleBitsScoreDTO {
                         Player = CreatePlayerDTO(s.Player, s.Value),
                         Rank = rank++,
