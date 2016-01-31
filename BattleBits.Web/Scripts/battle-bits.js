@@ -62,11 +62,7 @@
         });
 
         $scope.playGame = function () {
-            if ($scope.currentGame != null) {
-                return $location.path('/viewer');
-            }
             BattleBitsService.playGame();
-            $scope.enlisted = true;
         };
     }])
     .controller('GamePlayController', ['$scope', '$interval', 'BattleBitsService', '$location', function ($scope, $interval, BattleBitsService, $location) {
@@ -134,7 +130,7 @@
         });
     }])
     .service('BattleBitsService', ['competitionId', 'SignalR', '$rootScope', '$q', function(competitionId, SignalR, $rootScope, $q) {
-        var BatteBitsService = function (competitionId, SignalR) {
+        var BatteBitsService = function(competitionId, SignalR) {
 
             this.competition = null;
             this.nextGame = null;
@@ -144,7 +140,104 @@
 
             var that = this;
             var hub = SignalR.BattleBitsHub;
-            SignalR.hub.logging = true; // TODO disable logging later
+            hub.client.gameScheduled = function(event) {
+                $rootScope.$apply(function() {
+                    that.nextGame = event.game;
+                    that.nextGame.delay = event.delay;
+                    $rootScope.$emit('game-scheduled');
+                });
+            };
+
+            hub.client.playerJoined = function(event) {
+                $rootScope.$apply(function() {
+                    if (that.nextGame) {
+                        if (!that.nextGame.scores) {
+                            that.nextGame.scores = [];
+                        }
+                        that.nextGame.scores.push({
+                            player: event.player,
+                            time: 0,
+                            score: 0
+                        });
+                        $rootScope.$emit('player-joined');
+                    }
+                });
+            };
+
+            hub.client.playerLeft = function(event) {
+                $rootScope.$apply(function() {
+                    if (that.nextGame
+                        && that.nextGame.scores) {
+                        that.nextGame.scores = $.grep(that.nextGame.scores, function(s) {
+                            return s.player.userId != event.player.userId || s.score > 0;
+                        });
+                    }
+                    $rootScope.$emit('player-left');
+                });
+            };
+
+            hub.client.gameStarted = function(event) {
+                $rootScope.$apply(function() {
+                    that.currentGame = event.game;
+                    that.nextGame = null;
+                    $rootScope.$emit('game-started');
+                });
+            };
+
+            hub.client.gameEnded = function(event) {
+                $rootScope.$apply(function() {
+                    that.currentGame = null;
+                    that.previousGame = event.game;
+                    that.highScores = event.highScores;
+                    $rootScope.$emit('game-ended');
+                });
+            };
+
+            this.playGame = function() {
+                hub.server.joinGame(competitionId)
+                    .fail(function(error) {
+                        throw error; // TODO Handle Error
+                    });
+            };
+
+            this.nextNumber = function(number, value) {
+                var deferred = $q.defer();
+                hub.server.nextNumber(competitionId, number, value)
+                    .done(function(nextNumber) {
+                        deferred.resolve();
+                    })
+                    .fail(function() {
+                        deferred.reject();
+                    });
+                return deferred.promise;
+            };
+
+            this.onCompetitionJoined = function(scope, callback) {
+                var unsubscribe = $rootScope.$on('competition-joined', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
+            this.onGameScheduled = function(scope, callback) {
+                var unsubscribe = $rootScope.$on('game-scheduled', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
+            this.onGameStarted = function(scope, callback) {
+                var unsubscribe = $rootScope.$on('game-started', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
+            this.onPlayerJoined = function(scope, callback) {
+                var unsubscribe = $rootScope.$on('player-joined', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
+            this.onPlayerLeft = function(scope, callback) {
+                var unsubscribe = $rootScope.$on('player-left', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
+            this.onGameEnded = function(scope, callback) {
+                var unsubscribe = $rootScope.$on('game-ended', callback);
+                scope.$on('$destroy', unsubscribe);
+            };
+
+            // This MUST come at the end, or client callbacks wont be registered!
             SignalR.hub.start()
                 .done(function() {
                     hub.server.joinCompetition(competitionId)
@@ -163,103 +256,7 @@
                 }).fail(function(error) {
                     throw error; // TODO Handle error
                 });
-
-            hub.client.gameScheduled = function(event) {
-                $rootScope.$apply(function() {
-                    that.nextGame = event.game;
-                    that.nextGame.delay = event.delay;
-                    $rootScope.$emit('game-scheduled');
-                });
-            };
-
-            hub.client.playerJoined = function (event) {
-                $rootScope.$apply(function () {
-                    if (that.nextGame) {
-                        if (!that.nextGame.scores) {
-                            that.nextGame.scores = [];
-                        }
-                        that.nextGame.scores.push({
-                            player: event.player,
-                            time: 0,
-                            score: 0
-                        });
-                        $rootScope.$emit('player-joined');
-                    }
-                });
-            };
-
-            hub.client.playerLeft = function (event) {
-                $rootScope.$apply(function () {
-                    if (that.nextGame
-                        && that.nextGame.scores) {
-                        that.nextGame.scores = $.grep(that.nextGame.scores, function (s) {
-                            return s.player.userId != event.player.userId || s.score > 0;
-                        });
-                    }
-                    $rootScope.$emit('player-left');
-                });
-            };
-
-            hub.client.gameStarted = function (event) {
-                $rootScope.$apply(function() {
-                    that.currentGame = event.game;
-                    that.nextGame = null;
-                    $rootScope.$emit('game-started');
-                });
-            };
-
-            hub.client.gameEnded = function (event) {
-                $rootScope.$apply(function () {
-                    that.currentGame = null;
-                    that.previousGame = event.game;
-                    that.highScores = event.highScores;
-                    $rootScope.$emit('game-ended');
-                });
-            };
-
-            this.playGame = function() {
-                hub.server.joinGame(competitionId)
-                    .fail(function(error) {
-                        throw error;  // TODO Handle Error
-                    });
-            };
-
-            this.nextNumber = function (number, value) {
-                var deferred = $q.defer();
-                hub.server.nextNumber(competitionId, number, value)
-                    .done(function (nextNumber) {
-                        deferred.resolve();
-                    })
-                    .fail(function () {
-                        deferred.reject();
-                    });
-                return deferred.promise;
-            };
-
-            this.onCompetitionJoined = function (scope, callback) {
-                var unsubscribe = $rootScope.$on('competition-joined', callback);
-                scope.$on('$destroy', unsubscribe);
-            };
-            this.onGameScheduled = function(scope, callback) {
-                var unsubscribe = $rootScope.$on('game-scheduled', callback);
-                scope.$on('$destroy', unsubscribe);
-            };
-            this.onGameStarted = function (scope, callback) {
-                var unsubscribe = $rootScope.$on('game-started', callback);
-                scope.$on('$destroy', unsubscribe);
-            };
-            this.onPlayerJoined = function (scope, callback) {
-                var unsubscribe = $rootScope.$on('player-joined', callback);
-                scope.$on('$destroy', unsubscribe);
-            };
-            this.onPlayerLeft = function (scope, callback) {
-                var unsubscribe = $rootScope.$on('player-left', callback);
-                scope.$on('$destroy', unsubscribe);
-            };
-            this.onGameEnded = function (scope, callback) {
-                var unsubscribe = $rootScope.$on('game-ended', callback);
-                scope.$on('$destroy', unsubscribe);
-            };
+            // Do not add code below this line
         };
         return new BatteBitsService(competitionId, SignalR);
     }])
