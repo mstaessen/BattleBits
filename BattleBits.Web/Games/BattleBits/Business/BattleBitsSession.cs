@@ -8,12 +8,11 @@ namespace BattleBits.Web.Games.BattleBits.Business
 {
     public class BattleBitsSession
     {
-        public const int ScoreCount = 20;
+        public const int HighScoreCount = 10;
         public static TimeSpan GameDelay = TimeSpan.FromSeconds(15);
 
         private Timer gameStartTimer;
         private Timer gameEndTimer;
-
 
         public BattleBitsCompetitionMeta CompetitionMeta { get; set; }
 
@@ -21,14 +20,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public BattleBitsGame CurrentGame { get; private set; }
 
-        public BattleBitsGame CurrentOrNextGame
-        {
-            get {
-                if (NextGame != null) return NextGame;
-                if (CurrentGame != null) return CurrentGame;
-                return null;
-            }
-        }
+        public BattleBitsGame CurrentOrNextGame => NextGame ?? CurrentGame;
 
         public BattleBitsGame PreviousGame { get; internal set; }
 
@@ -73,7 +65,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
             return game;
         }
 
-        private Game CreateGameModel(BattleBitsGame game)
+        private static Game CreateGameModel(BattleBitsGame game)
         {
             var model = new Game {
                 StartTime = game.StartTime,
@@ -94,7 +86,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
             HighScores = HighScores.Concat(scores)
                 .OrderByDescending(x => x.Value)
                 .ThenByDescending(x => x.Time)
-                .Take(ScoreCount)
+                .Take(HighScoreCount)
                 .ToList();
             return HighScores;
         }
@@ -103,7 +95,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
         {
             if (CurrentGame != null 
                 && CurrentGame.StartTime > DateTime.UtcNow
-                && CurrentGame.Scores.Any()) {
+                && CurrentGame.Scores.Any(x => x.Value > 0)) {
                 // Game already started
                 return false;
             }

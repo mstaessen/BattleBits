@@ -184,7 +184,7 @@ namespace BattleBits.Web.Games.BattleBits
                     })
                     .OrderByDescending(x => x.Value)
                     .ThenBy(x => x.Time)
-                    .Take(BattleBitsSession.ScoreCount)
+                    .Take(BattleBitsSession.HighScoreCount)
                     .ToList();
                 return new BattleBitsSession {
                     CompetitionMeta = competition,

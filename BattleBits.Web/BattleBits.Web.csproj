@@ -415,6 +415,36 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\_bootstrap\mixins\_alerts.scss" />
+    <Content Include="Content\_bootstrap\mixins\_background-variant.scss" />
+    <Content Include="Content\_bootstrap\mixins\_border-radius.scss" />
+    <Content Include="Content\_bootstrap\mixins\_buttons.scss" />
+    <Content Include="Content\_bootstrap\mixins\_center-block.scss" />
+    <Content Include="Content\_bootstrap\mixins\_clearfix.scss" />
+    <Content Include="Content\_bootstrap\mixins\_forms.scss" />
+    <Content Include="Content\_bootstrap\mixins\_gradients.scss" />
+    <Content Include="Content\_bootstrap\mixins\_grid-framework.scss" />
+    <Content Include="Content\_bootstrap\mixins\_grid.scss" />
+    <Content Include="Content\_bootstrap\mixins\_hide-text.scss" />
+    <Content Include="Content\_bootstrap\mixins\_image.scss" />
+    <Content Include="Content\_bootstrap\mixins\_labels.scss" />
+    <Content Include="Content\_bootstrap\mixins\_list-group.scss" />
+    <Content Include="Content\_bootstrap\mixins\_nav-divider.scss" />
+    <Content Include="Content\_bootstrap\mixins\_nav-vertical-align.scss" />
+    <Content Include="Content\_bootstrap\mixins\_opacity.scss" />
+    <Content Include="Content\_bootstrap\mixins\_pagination.scss" />
+    <Content Include="Content\_bootstrap\mixins\_panels.scss" />
+    <Content Include="Content\_bootstrap\mixins\_progress-bar.scss" />
+    <Content Include="Content\_bootstrap\mixins\_reset-filter.scss" />
+    <Content Include="Content\_bootstrap\mixins\_reset-text.scss" />
+    <Content Include="Content\_bootstrap\mixins\_resize.scss" />
+    <Content Include="Content\_bootstrap\mixins\_responsive-visibility.scss" />
+    <Content Include="Content\_bootstrap\mixins\_size.scss" />
+    <Content Include="Content\_bootstrap\mixins\_tab-focus.scss" />
+    <Content Include="Content\_bootstrap\mixins\_table-row.scss" />
+    <Content Include="Content\_bootstrap\mixins\_text-emphasis.scss" />
+    <Content Include="Content\_bootstrap\mixins\_text-overflow.scss" />
+    <Content Include="Content\_bootstrap\mixins\_vendor-prefixes.scss" />
     <None Include="Project_Readme.html" />
     <Content Include="Views\BattleBits\Display.cshtml" />
     <Content Include="Views\BattleBits\LeaderboardTemplate.cshtml" />
