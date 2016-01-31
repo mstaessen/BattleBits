@@ -263,7 +263,7 @@ namespace BattleBits.Web.Games.BattleBits
         private static BattleBitsScoreDTO CreateScoreDTO(BattleBitsScore score, int rank)
         {
             return new BattleBitsScoreDTO {
-                Rank = rank,
+                Rank = rank + 1,
                 Player = CreatePlayerDTO(score.Player),
                 Score = score.Value,
                 Time = score.Time.TotalSeconds

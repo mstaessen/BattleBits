@@ -1,15 +1,15 @@
 ﻿angular
     .module('BattleBits', ['ngRoute'])
     .controller('LeaderboardController', ['$scope', 'BattleBitsService', '$location', '$interval', 'gameUrl', 'userId', function ($scope, BattleBitsService, $location, $interval, gameUrl, userId) {
-        if ($scope.currentGame) {
-            return $location.path('/viewer');
-        }
-        
         $scope.nextGame = BattleBitsService.nextGame;
         $scope.previousGame = BattleBitsService.previousGame;
         $scope.gameUrl = gameUrl;
         $scope.competition = BattleBitsService.competition;
         $scope.highScores = BattleBitsService.highScores;
+
+        if ($scope.currentGame) {
+            return $location.path('/viewer');
+        }
 
         BattleBitsService.onCompetitionJoined($scope, function () {
             $scope.competition = BattleBitsService.competition;
