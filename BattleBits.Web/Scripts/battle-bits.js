@@ -48,6 +48,7 @@
 
         BattleBitsService.onGameEnded($scope, function () {
             $scope.previousGame = BattleBitsService.previousGame;
+            $scope.highScores = BattleBitsService.highScores;
         });
 
         $scope.playGame = function () {
@@ -133,6 +134,7 @@
 
             var that = this;
             var hub = SignalR.BattleBitsHub;
+            SignalR.hub.logging = true; // TODO disable logging later
             SignalR.hub.start()
                 .done(function() {
                     hub.server.joinCompetition(competitionId)
@@ -200,6 +202,7 @@
                 $rootScope.$apply(function () {
                     that.currentGame = null;
                     that.previousGame = event.game;
+                    that.highScores = event.highScores;
                     $rootScope.$emit('game-ended');
                 });
             };

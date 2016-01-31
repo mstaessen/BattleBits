@@ -237,8 +237,8 @@ namespace BattleBits.Web.Games.BattleBits
                 var evt = CreateGameStartedEvent(g);
                 Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Id)).GameStarted(evt);
             };
-            Action<BattleBitsGame> onGameEnd = g => {
-                var evt = CreateGameEndedEvent(g);
+            Action<BattleBitsGame, IList<BattleBitsScore>> onGameEnd = (g, scores) => {
+                var evt = CreateGameEndedEvent(g, scores);
                 Clients.Group(FormatCompetitionGroupName(session.CompetitionMeta.Id)).GameEnded(evt);
             };
             game = session.CreateGame(onGameStart, onGameEnd);
@@ -252,10 +252,21 @@ namespace BattleBits.Web.Games.BattleBits
             };
         }
 
-        private static BattleBitsGameEndedEvent CreateGameEndedEvent(BattleBitsGame game)
+        private static BattleBitsGameEndedEvent CreateGameEndedEvent(BattleBitsGame game, IList<BattleBitsScore> scores)
         {
             return new BattleBitsGameEndedEvent {
-                Game = CreateGameDTO(game)
+                Game = CreateGameDTO(game),
+                HighScores = scores.Select(CreateScoreDTO).ToList()
+            };
+        }
+
+        private static BattleBitsScoreDTO CreateScoreDTO(BattleBitsScore score, int rank)
+        {
+            return new BattleBitsScoreDTO {
+                Rank = rank,
+                Player = CreatePlayerDTO(score.Player),
+                Score = score.Value,
+                Time = score.Time.TotalSeconds
             };
         }
 

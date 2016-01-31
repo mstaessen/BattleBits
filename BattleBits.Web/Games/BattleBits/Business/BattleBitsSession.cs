@@ -34,7 +34,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public IList<BattleBitsScore> HighScores { get; set; }
 
-        public BattleBitsGame CreateGame(Action<BattleBitsGame> onGameStart, Action<BattleBitsGame> onGameEnd)
+        public BattleBitsGame CreateGame(Action<BattleBitsGame> onGameStart, Action<BattleBitsGame, IList<BattleBitsScore>> onGameEnd)
         {
             if (CurrentGame != null || NextGame != null) {
                 throw new Exception("Please wait for the current game to end.");
@@ -62,10 +62,9 @@ namespace BattleBits.Web.Games.BattleBits.Business
                         context.SaveChanges();
                     }
                 }
-                onGameEnd(game);
+                onGameEnd(game, UpdateHighScores(game.Scores));
                 gameEndTimer.Dispose();
                 gameEndTimer = null;
-                UpdateHighScores(game.Scores);
                 PreviousGame = game;
                 CurrentGame = null;
             }, null, game.EndTime - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
@@ -90,13 +89,14 @@ namespace BattleBits.Web.Games.BattleBits.Business
             return model;
         }
 
-        private void UpdateHighScores(IEnumerable<BattleBitsScore> scores)
+        private IList<BattleBitsScore> UpdateHighScores(IEnumerable<BattleBitsScore> scores)
         {
             HighScores = HighScores.Concat(scores)
                 .OrderByDescending(x => x.Value)
                 .ThenByDescending(x => x.Time)
                 .Take(ScoreCount)
                 .ToList();
+            return HighScores;
         }
 
         public bool CancelGame()
