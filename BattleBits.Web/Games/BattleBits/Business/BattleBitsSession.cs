@@ -94,7 +94,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
         public bool CancelGame()
         {
             if (CurrentGame != null 
-                && CurrentGame.StartTime > DateTime.UtcNow
+                && CurrentGame.StartTime <= DateTime.UtcNow
                 && CurrentGame.Scores.Any(x => x.Value > 0)) {
                 // Game already started
                 return false;
