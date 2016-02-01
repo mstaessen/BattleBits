@@ -445,6 +445,7 @@
     <Content Include="Content\_bootstrap\mixins\_text-emphasis.scss" />
     <Content Include="Content\_bootstrap\mixins\_text-overflow.scss" />
     <Content Include="Content\_bootstrap\mixins\_vendor-prefixes.scss" />
+    <Content Include="Content\_bootstrap-social.scss" />
     <None Include="Project_Readme.html" />
     <Content Include="Views\BattleBits\Display.cshtml" />
     <Content Include="Views\BattleBits\LeaderboardTemplate.cshtml" />

@@ -26,8 +26,9 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public void AddPlayer(BattleBitsPlayer player)
         {
-            if (player == null || Scores.ContainsKey(player.UserId))
+            if (player == null || Scores.ContainsKey(player.UserId)) {
                 return;
+            }
             Scores.Add(player.UserId, new BattleBitsScore {
                 Player = player,
                 Value = 0,

@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
-using Microsoft.Owin.Security.OAuth;
 using Owin;
 using BattleBits.Web.Models;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security.Facebook;
+using Microsoft.Owin.Security.MicrosoftAccount;
+using Microsoft.Owin.Security.Twitter;
+using Owin.Security.Providers.GitHub;
 using Owin.Security.Providers.LinkedIn;
 
 namespace BattleBits.Web
@@ -30,12 +30,10 @@ namespace BattleBits.Web
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
             // Configure the sign in cookie
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
+            app.UseCookieAuthentication(new CookieAuthenticationOptions {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Account/Login"),
-                Provider = new CookieAuthenticationProvider
-                {
+                Provider = new CookieAuthenticationProvider {
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
@@ -54,25 +52,35 @@ namespace BattleBits.Web
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
             // Uncomment the following lines to enable logging in with third party login providers
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
+            app.UseFacebookAuthentication(new FacebookAuthenticationOptions {
+                AppId = appSettings["FacebookAppId"],
+                AppSecret = appSettings["FacebookAppSecret"]
+            });
+            app.UseTwitterAuthentication(new TwitterAuthenticationOptions {
+                ConsumerKey = appSettings["TwitterConsumerKey"],
+                ConsumerSecret = appSettings["TwitterConsumerSecret"]
+            });
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions {
+                ClientId = appSettings["GoogleClientId"],
+                ClientSecret = appSettings["GoogleClientSecret"]
+            });
+            app.UseMicrosoftAccountAuthentication(new MicrosoftAccountAuthenticationOptions {
+                ClientId = appSettings["MicrosoftClientId"],
+                ClientSecret = appSettings["MicrosoftClientSecret"]
+            });
 
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
+            var githubOptions = new GitHubAuthenticationOptions {
+                ClientId = appSettings["GitHubClientId"],
+                ClientSecret = appSettings["GitHubClientSecret"],
+            };
+            githubOptions.Scope.Clear();
+            githubOptions.Scope.Add("user:email");
+            app.UseGitHubAuthentication(githubOptions);
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
-
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
-
-            app.UseLinkedInAuthentication(appSettings["LinkedInClientId"], appSettings["LinkedInClientSecret"]);
+            app.UseLinkedInAuthentication(new LinkedInAuthenticationOptions {
+                ClientId = appSettings["LinkedInClientId"],
+                ClientSecret = appSettings["LinkedInClientSecret"]
+            });
         }
     }
 }

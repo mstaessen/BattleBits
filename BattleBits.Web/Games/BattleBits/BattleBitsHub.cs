@@ -34,20 +34,16 @@ namespace BattleBits.Web.Games.BattleBits
             var player = GetPlayer(Context.User.Identity.GetUserId());
             game.AddPlayer(player);
 
-            if (gameCreated)
-            {
+            if (gameCreated) {
                 Clients.Group(FormatCompetitionGroupName(competitionId)).GameScheduled(CreateGameScheduledEvent(game));
-            }
-            else
-            {
+            } else {
                 Clients.Group(FormatCompetitionGroupName(competitionId)).PlayerJoined(CreatePlayerJoinedEvent(player));
             }
         }
 
         private static BattleBitsPlayerLeftEvent CreatePlayerLeftEvent(string playerId)
         {
-            return new BattleBitsPlayerLeftEvent
-            {
+            return new BattleBitsPlayerLeftEvent {
                 UserId = playerId
             };
         }
@@ -110,7 +106,7 @@ namespace BattleBits.Web.Games.BattleBits
             if (score == null) {
                 throw new Exception("Player not found.");
             }
-            if(game.EndTime >= DateTime.UtcNow) // answer only accepted in time
+            if (game.EndTime >= DateTime.UtcNow) // answer only accepted in time
             {
                 score.Value++;
                 score.Time = DateTime.UtcNow - game.StartTime;
@@ -123,10 +119,8 @@ namespace BattleBits.Web.Games.BattleBits
         public override Task OnDisconnected(bool stopCalled)
         {
             var playerId = Context.User.Identity.GetUserId();
-            if (playerId != null)
-            {
-                foreach (var session in ActiveSessions.Values)
-                {
+            if (playerId != null) {
+                foreach (var session in ActiveSessions.Values) {
                     var game = session.CurrentOrNextGame;
                     if (game == null) continue; // no game in progress
                     if (!game.Scores.ContainsKey(playerId)) continue; // player that's leaving has no score
@@ -135,8 +129,7 @@ namespace BattleBits.Web.Games.BattleBits
                     var score = game.Scores[playerId];
                     if (score.Value > 0) continue;
                     game.Scores.Remove(playerId);
-                    if (!game.Scores.Any())
-                    {
+                    if (!game.Scores.Any()) {
                         // Cancel scheduled game when last player disconnects
                         session.CancelGame();
                         // TODO: Push cancelling to all clients or handle clientside on playerleft?
@@ -198,19 +191,17 @@ namespace BattleBits.Web.Games.BattleBits
                 .Where(x => x.Game.Competition.Id == competitionMeta.Id
                     && x.Game.StartTime == startTime)
                 .Join(context.Users, s => s.UserId, u => u.Id, (s, u) =>
-                    new BattleBitsScore
-                    {
+                    new BattleBitsScore {
                         Value = s.Value,
                         Time = s.Time,
-                        Player = new BattleBitsPlayer
-                        {
+                        Player = new BattleBitsPlayer {
                             UserId = u.Id,
                             UserName = u.UserName,
                             Company = u.Company,
                         }
                     }).OrderByDescending(s => s.Value)
-                    .ThenBy(s => s.Time)
-           .ToList();
+                .ThenBy(s => s.Time)
+                .ToList();
         }
 
         private bool GetOrCreateGame(BattleBitsSession session, out BattleBitsGame game)
@@ -218,8 +209,7 @@ namespace BattleBits.Web.Games.BattleBits
             if (session == null) {
                 throw new ArgumentNullException(nameof(session));
             }
-            if(session.CurrentOrNextGame != null)
-            {
+            if (session.CurrentOrNextGame != null) {
                 game = session.CurrentOrNextGame;
                 return false;
             }
@@ -289,8 +279,7 @@ namespace BattleBits.Web.Games.BattleBits
                 Numbers = game.Bytes.Select(Convert.ToInt32).ToList(),
                 Scores = game.Scores.Values
                     .Select(s =>
-                        new BattleBitsScoreDTO
-                        {
+                        new BattleBitsScoreDTO {
                             Player = CreatePlayerDTO(s.Player, s.Value),
                             Rank = rank++,
                             Score = s.Value,
@@ -309,8 +298,8 @@ namespace BattleBits.Web.Games.BattleBits
                 UserId = player.UserId,
                 UserName = player.UserName,
                 Company = player.Company,
-                HighScore = player.HighScore.HasValue 
-                    ? Math.Max(newHighScore ?? 0, player.HighScore.Value) 
+                HighScore = player.HighScore.HasValue
+                    ? Math.Max(newHighScore ?? 0, player.HighScore.Value)
                     : newHighScore ?? 0
             };
         }
