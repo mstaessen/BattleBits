@@ -118,6 +118,7 @@ namespace BattleBits.Web.Games.BattleBits
 
         public override Task OnDisconnected(bool stopCalled)
         {
+            // BUG: if a user is connected twice and disconnects in one place, player is "kicked" from game.
             var playerId = Context.User.Identity.GetUserId();
             if (playerId != null) {
                 foreach (var session in ActiveSessions.Values) {

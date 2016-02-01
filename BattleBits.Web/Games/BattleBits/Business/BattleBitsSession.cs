@@ -87,7 +87,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
         {
             HighScores = HighScores.Concat(scores)
                 .OrderByDescending(x => x.Value)
-                .ThenByDescending(x => x.Time)
+                .ThenBy(x => x.Time)
                 .Take(HighScoreCount)
                 .ToList();
             return HighScores;
