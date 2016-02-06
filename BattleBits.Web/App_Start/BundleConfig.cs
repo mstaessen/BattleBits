@@ -14,7 +14,9 @@ namespace BattleBits.Web
             bundles.Add(new ScriptBundle("~/bundles/signalr").Include("~/Scripts/jquery.signalr.min.js"));
             bundles.Add(new ScriptBundle("~/bundles/angular").Include("~/Scripts/angular.min.js", "~/Scripts/angular-route.min.js"));
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include("~/Scripts/bootstrap.min.js"));
-            bundles.Add(new ScriptBundle("~/bundles/battle-bits").Include("~/Scripts/battle-bits.js"));
+            bundles.Add(new ScriptBundle("~/bundles/battle-bits")
+                .Include("~/Scripts/battle-bits.js")
+                .Include("~/Scripts/battle-bits-practice.js"));
         }
     }
 }
