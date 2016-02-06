@@ -106,6 +106,10 @@ namespace BattleBits.Web.Games.BattleBits
             if (score == null) {
                 throw new Exception("Player not found.");
             }
+            if(score.Value != number)
+            {
+                throw new Exception("This number is not permitted at this time");
+            }
             if (game.EndTime >= DateTime.UtcNow) // answer only accepted in time
             {
                 score.Value++;
@@ -187,7 +191,9 @@ namespace BattleBits.Web.Games.BattleBits
         {
             var startTime = context.Scores
                 .Where(x => x.Game.Competition.Id == competitionMeta.Id)
-                .Max(s => s.Game.StartTime);
+                .Select(s => s.Game.StartTime)
+                .DefaultIfEmpty()
+                .Max();
             return context.Scores
                 .Where(x => x.Game.Competition.Id == competitionMeta.Id
                     && x.Game.StartTime == startTime)
