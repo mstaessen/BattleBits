@@ -476,7 +476,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <None Include="Properties\PublishProfiles\capgemini-competitions - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
-    <Content Include="Views\BattleBits\GamePracticeTemplate.cshtml" />
     <Content Include="Views\BattleBits\Practice.cshtml" />
   </ItemGroup>
   <ItemGroup>
