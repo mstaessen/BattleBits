@@ -13,20 +13,12 @@ namespace BattleBits.Web.Controllers
             });
         }
 
-        public ActionResult LeaderboardTemplate()
-        {
-            return View();
-        }
+        public ActionResult Practice() => View();
 
-        public ActionResult GameDisplayTemplate()
-        {
-            return View();
-        }
+        public ActionResult LeaderboardTemplate() => View();
 
-        public ActionResult GamePlayTemplate()
-        {
-            return View();
+        public ActionResult GameDisplayTemplate() => View();
 
-        }
+        public ActionResult GamePlayTemplate() => View();
     }
 }

@@ -318,6 +318,7 @@
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\angular-route.min.js" />
+    <Content Include="Scripts\battle-bits-practice.js" />
     <Content Include="Scripts\battle-bits.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -475,6 +476,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <None Include="Properties\PublishProfiles\capgemini-competitions - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <Content Include="Views\BattleBits\Practice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

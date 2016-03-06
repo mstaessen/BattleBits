@@ -1,0 +1,117 @@
+﻿@model BattleBits.Web.ViewModels.BattleBitsViewModel
+
+<div ng-app="BattleBitsPractice" ng-controller="GamePracticeController">
+    <div class="container-flexbox">
+        <div class="row">
+            <div class="col">Practice Mode</div>
+            <div class="col">{{numbersGuessed}} numbers guessed</div>
+        </div>
+        <div class="two row">
+            <p class="challenge">
+                {{ number | hex }} = <span class="label label-default">{{ guess | binary:8 }}</span>
+            </p>
+        </div>
+        <div class="two row">
+            <ul class="bits noselect">
+                <li ng-class="{active: isBitActive(7)}" ng-click="toggleBit(7)">128</li>
+                <li ng-class="{active: isBitActive(6)}" ng-click="toggleBit(6)">64</li>
+                <li ng-class="{active: isBitActive(5)}" ng-click="toggleBit(5)">32</li>
+                <li ng-class="{active: isBitActive(4)}" ng-click="toggleBit(4)">16</li>
+                <li ng-class="{active: isBitActive(3)}" ng-click="toggleBit(3)">8</li>
+                <li ng-class="{active: isBitActive(2)}" ng-click="toggleBit(2)">4</li>
+                <li ng-class="{active: isBitActive(1)}" ng-click="toggleBit(1)">2</li>
+                <li ng-class="{active: isBitActive(0)}" ng-click="toggleBit(0)">1</li>
+            </ul>
+        </div>
+    </div>
+    <button type="button" class="btn btn-info" ng-click="cheatSheetEnabled=!cheatSheetEnabled">CheatSheet</button>
+    <div class="container-flexbox" ng-show="cheatSheetEnabled">
+        <table class="table table-striped">
+            <caption>Hex to Binary Cheat Sheet</caption>
+            <thead>
+                <tr>
+                    <th>Hexadecimal</th>
+                    <th>Binary</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>0001</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>0010</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>0011</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>0100</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>0101</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>0110</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>0111</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>1000</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>1001</td>
+                </tr>
+                <tr>
+                    <td>A</td>
+                    <td>1010</td>
+                </tr>
+                <tr>
+                    <td>B</td>
+                    <td>1011</td>
+                </tr>
+                <tr>
+                    <td>C</td>
+                    <td>1100</td>
+                </tr>
+                <tr>
+                    <td>D</td>
+                    <td>1101</td>
+                </tr>
+                <tr>
+                    <td>E</td>
+                    <td>1110</td>
+                </tr>
+                <tr>
+                    <td>F</td>
+                    <td>1111</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        angular
+            .module('BattleBitsPractice')
+            .config(function ($routeProvider) {
+                $routeProvider
+                    .when('/', {
+                        controller: 'GamePracticeController'
+                    })
+                    .otherwise({
+                        redirectTo: '/'
+                    });
+            });
+    </script>
+}
