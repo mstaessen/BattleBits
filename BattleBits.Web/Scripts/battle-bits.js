@@ -109,7 +109,6 @@
     .controller('GameDisplayController', ['$scope', 'BattleBitsService', '$location', '$interval', function ($scope, BattleBitsService, $location, $interval) {
         $scope.competition = BattleBitsService.competition;
         $scope.game = BattleBitsService.currentGame;
-
         if ($scope.game == null) {
             return $location.path('/');
         }
@@ -118,6 +117,19 @@
         $interval(function () {
             $scope.timeLeft--;
         }, 1000, $scope.game.duration);
+
+        $scope.scores = function(index) {
+            var items = [];
+            for (var key in $scope.game.scores) {
+                if ($scope.game.scores.hasOwnProperty(key)) {
+                    var score = $scope.game.scores[key];
+                    if (score.score === (index + 1)) {
+                        items.push(score);
+                    }
+                }
+            }
+            return items;
+        };
 
         BattleBitsService.onGameEnded($scope, function () {
             return $location.path('/');
@@ -188,8 +200,7 @@
 
             hub.client.playerScored = function (event) {
                 $rootScope.$apply(function () {
-                    if (that.currentGame
-                            && that.currentGame.scores) {
+                    if (that.currentGame && that.currentGame.scores) {
                         that.currentGame.scores[event.score.player.userId] = event.score;
                     }
                     $rootScope.$emit('player-scored');

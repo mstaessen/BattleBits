@@ -52,14 +52,14 @@ namespace BattleBits.Web
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
             // Uncomment the following lines to enable logging in with third party login providers
-            app.UseFacebookAuthentication(new FacebookAuthenticationOptions {
-                AppId = appSettings["FacebookAppId"],
-                AppSecret = appSettings["FacebookAppSecret"]
-            });
-            app.UseTwitterAuthentication(new TwitterAuthenticationOptions {
-                ConsumerKey = appSettings["TwitterConsumerKey"],
-                ConsumerSecret = appSettings["TwitterConsumerSecret"]
-            });
+//            app.UseFacebookAuthentication(new FacebookAuthenticationOptions {
+//                AppId = appSettings["FacebookAppId"],
+//                AppSecret = appSettings["FacebookAppSecret"]
+//            });
+//            app.UseTwitterAuthentication(new TwitterAuthenticationOptions {
+//                ConsumerKey = appSettings["TwitterConsumerKey"],
+//                ConsumerSecret = appSettings["TwitterConsumerSecret"]
+//            });
             app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions {
                 ClientId = appSettings["GoogleClientId"],
                 ClientSecret = appSettings["GoogleClientSecret"]

@@ -9,10 +9,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3" ng-repeat="number in game.numbers track by $index">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h3 class="text-center">{{ number | hex }}</h3>
+        <div ng-repeat="number in game.numbers track by $index">
+            <div class="clearfix" ng-if="$index % 4 == 0"></div>
+            <div class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3 class="text-center">{{ number | hex }}</h3>
+                        <p class="text-center">
+                            <span class="label label-default" ng-repeat="score in scores($index)">{{ score.player.userName }} @@ {{ score.time | number:2 }}s</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
