@@ -8,11 +8,13 @@ namespace BattleBits.Web.ViewModels
         [Display(Name = "Name")]
         public string Name { get; set; }
 
+        [Required]
+        [Display(Name = "School")]
+        public string School { get; set; }
 
         [Required]
-        [Display(Name = "Company")]
-        public string Company { get; set; }
-
+        [Display(Name = "Study")]
+        public string Study { get; set; }
 
         [Required]
         [Display(Name = "Email")]

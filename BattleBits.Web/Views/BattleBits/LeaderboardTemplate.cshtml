@@ -22,14 +22,14 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Company</th>
+                                    <th>School</th>
                                     <th>High Score</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="score in nextGame.scores track by $index">
                                     <td>{{ score.player.userName }}</td>
-                                    <td>{{ score.player.company }}</td>
+                                    <td>{{ score.player.school }}</td>
                                     <td class="text-right">{{ score.player.highScore }}</td>
                                 </tr>
                             </tbody>
@@ -56,7 +56,7 @@
                         <tr>
                             <th>Rank</th>
                             <th>Name</th>
-                            <th>Company</th>
+                            <th>School</th>
                             <th>Time</th>
                             <th>Score</th>
                         </tr>
@@ -65,7 +65,7 @@
                         <tr ng-repeat="score in previousGameScores | orderBy:'+rank'">
                             <td>{{ score.rank }}</td>
                             <td>{{ score.player.userName }}</td>
-                            <td>{{ score.player.company }}</td>
+                            <td>{{ score.player.school }}</td>
                             <td class="text-right">{{ score.time | number:2 }}s</td>
                             <td class="text-right">{{ score.score }}</td>
                         </tr>
@@ -85,7 +85,7 @@
                             <tr>
                                 <th>Rank</th>
                                 <th>Name</th>
-                                <th>Company</th>
+                                <th>School</th>
                                 <th>Time</th>
                                 <th>Score</th>
                             </tr>
@@ -94,7 +94,7 @@
                             <tr ng-repeat="score in highScores">
                                 <td>{{ score.rank }}</td>
                                 <td>{{ score.player.userName }}</td>
-                                <td>{{ score.player.company }}</td>
+                                <td>{{ score.player.school }}</td>
                                 <td class="text-right">{{ score.time | number:2 }}s</td>
                                 <td class="text-right">{{ score.score }}</td>
                             </tr>

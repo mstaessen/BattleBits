@@ -334,7 +334,8 @@ namespace BattleBits.Web.Controllers
                 }
                 var user = new ApplicationUser {
                     UserName = model.Name,
-                    Company = model.Company,
+                    School = model.School,
+                    Study = model.Study,
                     Email = model.Email
                 };
                 var result = await UserManager.CreateAsync(user);

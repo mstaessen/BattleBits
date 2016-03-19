@@ -10,8 +10,8 @@ namespace BattleBits.Web.Games.BattleBits.DTO
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
-        [JsonProperty("company")]
-        public string Company { get; set; }
+        [JsonProperty("school")]
+        public string School { get; set; }
 
         [JsonProperty("highScore")]
         public double? HighScore { get; set; }

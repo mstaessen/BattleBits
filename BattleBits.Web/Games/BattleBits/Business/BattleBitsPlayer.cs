@@ -6,7 +6,7 @@ namespace BattleBits.Web.Games.BattleBits.Business
 
         public string UserName { get; set; }
 
-        public string Company { get; set; }
+        public string School { get; set; }
 
         public double? HighScore { get; set; }
     }

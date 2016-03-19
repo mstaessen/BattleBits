@@ -24,10 +24,17 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Company, new {@class = "col-md-2 control-label"})
+        @Html.LabelFor(m => m.School, new {@class = "col-md-2 control-label"})
         <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Company, new {@class = "form-control"})
-            @Html.ValidationMessageFor(m => m.Company, "", new {@class = "text-danger"})
+            @Html.TextBoxFor(m => m.School, new {@class = "form-control"})
+            @Html.ValidationMessageFor(m => m.School, "", new {@class = "text-danger"})
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Study, new {@class = "col-md-2 control-label"})
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Study, new {@class = "form-control"})
+            @Html.ValidationMessageFor(m => m.Study, "", new {@class = "text-danger"})
         </div>
     </div>
     <div class="form-group">

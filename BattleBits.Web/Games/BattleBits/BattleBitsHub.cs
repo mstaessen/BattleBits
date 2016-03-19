@@ -54,7 +54,7 @@ namespace BattleBits.Web.Games.BattleBits
                 Player = new BattleBitsPlayerDTO {
                     UserId = player.UserId,
                     UserName = player.UserName,
-                    Company = player.Company,
+                    School = player.School,
                     HighScore = player.HighScore
                 }
             };
@@ -71,7 +71,7 @@ namespace BattleBits.Web.Games.BattleBits
                 return new BattleBitsPlayer {
                     UserId = user.Id,
                     UserName = user.UserName,
-                    Company = user.Company,
+                    School = user.School,
                     HighScore = highScore?.Value
                 };
             }
@@ -169,7 +169,7 @@ namespace BattleBits.Web.Games.BattleBits
                         Player = new BattleBitsPlayer {
                             UserId = u.Id,
                             UserName = u.UserName,
-                            Company = u.Company,
+                            School = u.School,
                             HighScore = s.Value
                         },
                         Value = s.Value,
@@ -204,7 +204,7 @@ namespace BattleBits.Web.Games.BattleBits
                         Player = new BattleBitsPlayer {
                             UserId = u.Id,
                             UserName = u.UserName,
-                            Company = u.Company,
+                            School = u.School,
                         }
                     }).OrderByDescending(s => s.Value)
                 .ThenBy(s => s.Time)
@@ -304,7 +304,7 @@ namespace BattleBits.Web.Games.BattleBits
             return new BattleBitsPlayerDTO {
                 UserId = player.UserId,
                 UserName = player.UserName,
-                Company = player.Company,
+                School = player.School,
                 HighScore = player.HighScore.HasValue
                     ? Math.Max(newHighScore ?? 0, player.HighScore.Value)
                     : newHighScore ?? 0

@@ -7,7 +7,9 @@ namespace BattleBits.Web.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public string Company { get; set; }
+        public string School { get; set; }
+
+        public string Study { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
