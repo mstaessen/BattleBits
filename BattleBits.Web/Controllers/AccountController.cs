@@ -336,7 +336,8 @@ namespace BattleBits.Web.Controllers
                     UserName = model.Name,
                     School = model.School,
                     Study = model.Study,
-                    Email = model.Email
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber
                 };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded) {
@@ -355,8 +356,6 @@ namespace BattleBits.Web.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

@@ -17,6 +17,12 @@ namespace BattleBits.Web.ViewModels
         public string Study { get; set; }
 
         [Required]
+        [RegularExpression("04[0-9]{8}", ErrorMessage="Phone number is invalid, please use format 04xxxxxxxx")]
+        [Display(Name = "Phone Number")]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
