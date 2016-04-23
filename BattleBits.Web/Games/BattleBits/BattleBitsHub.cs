@@ -175,8 +175,9 @@ namespace BattleBits.Web.Games.BattleBits
                         Value = s.Value,
                         Time = s.Time
                     })
-                    .OrderByDescending(x => x.Value)
-                    .ThenBy(x => x.Time)
+                    .GroupBy(x => x.Player.UserId)
+                    .Select(g => g.OrderByDescending(x => x.Value).ThenBy(x => x.Time).FirstOrDefault())
+                    .Where(g => g != null)
                     .Take(BattleBitsSession.HighScoreCount)
                     .ToList();
                 return new BattleBitsSession {
