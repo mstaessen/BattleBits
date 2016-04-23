@@ -178,6 +178,8 @@ namespace BattleBits.Web.Games.BattleBits
                     .GroupBy(x => x.Player.UserId)
                     .Select(g => g.OrderByDescending(x => x.Value).ThenBy(x => x.Time).FirstOrDefault())
                     .Where(g => g != null)
+                    .OrderByDescending(x => x.Value)
+                    .ThenBy(x => x.Time)
                     .Take(BattleBitsSession.HighScoreCount)
                     .ToList();
                 return new BattleBitsSession {
